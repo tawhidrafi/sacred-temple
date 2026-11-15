@@ -35,6 +35,7 @@ export async function exportDatabase() {
     "album_items",
     "media",
     "puja_bookings",
+    "visitations",
     "contact_messages",
     "volunteers",
     "audit_logs",

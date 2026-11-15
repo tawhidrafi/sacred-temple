@@ -28,6 +28,52 @@ function parseJson<T>(raw: string | null | undefined, fallback: T): T {
   }
 }
 
+async function autoPatchPujaBookingsSchema(db: DrizzleD1Database<any>) {
+  const patches = [
+    `CREATE TABLE IF NOT EXISTS \`puja_bookings\` (
+      \`id\` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+      \`ref\` text NOT NULL,
+      \`user_id\` text,
+      \`puja_id\` integer,
+      \`puja_type\` text DEFAULT 'standard' NOT NULL,
+      \`custom_puja_name\` text,
+      \`custom_dakshina\` integer,
+      \`special_instructions\` text,
+      \`name\` text NOT NULL,
+      \`phone\` text NOT NULL,
+      \`email\` text,
+      \`gotra\` text,
+      \`preferred_date\` text NOT NULL,
+      \`note\` text,
+      \`status\` text DEFAULT 'new' NOT NULL,
+      \`handled_by\` text,
+      \`admin_note\` text,
+      \`created_at\` integer NOT NULL,
+      \`updated_at\` integer NOT NULL,
+      FOREIGN KEY (\`user_id\`) REFERENCES \`user\`(\`id\`) ON UPDATE no action ON DELETE set null,
+      FOREIGN KEY (\`puja_id\`) REFERENCES \`pujas\`(\`id\`) ON UPDATE no action ON DELETE set null
+    )`,
+    "ALTER TABLE `puja_bookings` ADD `puja_type` text DEFAULT 'standard' NOT NULL",
+    "ALTER TABLE `puja_bookings` ADD `custom_puja_name` text",
+    "ALTER TABLE `puja_bookings` ADD `custom_dakshina` integer",
+    "ALTER TABLE `puja_bookings` ADD `special_instructions` text",
+    "CREATE UNIQUE INDEX IF NOT EXISTS `puja_bookings_ref_unique` ON `puja_bookings` (`ref`)",
+    "CREATE INDEX IF NOT EXISTS `puja_bookings_ref_idx` ON `puja_bookings` (`ref`)",
+    "CREATE INDEX IF NOT EXISTS `puja_bookings_user_id_idx` ON `puja_bookings` (`user_id`)",
+    "CREATE INDEX IF NOT EXISTS `puja_bookings_type_idx` ON `puja_bookings` (`puja_type`)",
+    "CREATE INDEX IF NOT EXISTS `puja_bookings_status_idx` ON `puja_bookings` (`status`)",
+    "CREATE INDEX IF NOT EXISTS `puja_bookings_pref_date_idx` ON `puja_bookings` (`preferred_date`)",
+  ];
+
+  for (const patch of patches) {
+    try {
+      await db.run(sql.raw(patch));
+    } catch {
+      // Ignore if table/column/index already exists
+    }
+  }
+}
+
 export class BookingsService {
   /**
    * Public submission creates a booking request.
@@ -85,6 +131,23 @@ export class BookingsService {
    * Public reference code lookup for booking status check.
    */
   static async getByRef(db: DrizzleD1Database<typeof schema>, ref: string) {
+    try {
+      return await this.executeGetByRef(db, ref);
+    } catch (err: any) {
+      if (
+        err?.message?.includes("no such column") ||
+        err?.message?.includes("no such table") ||
+        err?.message?.includes("puja_bookings")
+      ) {
+        console.warn("[BookingsService] Detected unmigrated puja_bookings schema in D1, auto-patching...");
+        await autoPatchPujaBookingsSchema(db);
+        return await this.executeGetByRef(db, ref);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeGetByRef(db: DrizzleD1Database<typeof schema>, ref: string) {
     const rows = await db
       .select({
         ref: pujaBookings.ref,
@@ -188,6 +251,23 @@ export class BookingsService {
 
   // --- Admin Queries (adminProcedure / staffProcedure) ---
   static async adminList(db: DrizzleD1Database<typeof schema>, query?: ListBookingsQuery) {
+    try {
+      return await this.executeAdminList(db, query);
+    } catch (err: any) {
+      if (
+        err?.message?.includes("no such column") ||
+        err?.message?.includes("no such table") ||
+        err?.message?.includes("puja_bookings")
+      ) {
+        console.warn("[BookingsService] Detected unmigrated puja_bookings schema in D1, auto-patching...");
+        await autoPatchPujaBookingsSchema(db);
+        return await this.executeAdminList(db, query);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeAdminList(db: DrizzleD1Database<typeof schema>, query?: ListBookingsQuery) {
     const page = query?.page || 1;
     const pageSize = Math.min(query?.pageSize || 20, 100);
     const offset = (page - 1) * pageSize;
@@ -283,6 +363,23 @@ export class BookingsService {
   }
 
   static async adminGet(db: DrizzleD1Database<typeof schema>, id: number) {
+    try {
+      return await this.executeAdminGet(db, id);
+    } catch (err: any) {
+      if (
+        err?.message?.includes("no such column") ||
+        err?.message?.includes("no such table") ||
+        err?.message?.includes("puja_bookings")
+      ) {
+        console.warn("[BookingsService] Detected unmigrated puja_bookings schema in D1, auto-patching...");
+        await autoPatchPujaBookingsSchema(db);
+        return await this.executeAdminGet(db, id);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeAdminGet(db: DrizzleD1Database<typeof schema>, id: number) {
     const rows = await db
       .select({
         id: pujaBookings.id,

@@ -5,7 +5,19 @@ import type { Role } from "../../shared/types";
 const t = initTRPC.context<Context>().create();
 
 export const router = t.router;
-export const publicProcedure = t.procedure;
+
+// Middleware to ensure database connection is available
+const enforceDb = t.middleware(({ ctx, next }) => {
+  if (!ctx.db) {
+    throw new TRPCError({
+      code: "INTERNAL_SERVER_ERROR",
+      message: "Database binding 'DB' is unavailable. Ensure your Cloudflare D1 binding is properly configured.",
+    });
+  }
+  return next();
+});
+
+export const publicProcedure = t.procedure.use(enforceDb);
 
 // Middleware to require authentication (any role: admin, editor, user)
 const isAuthed = t.middleware(({ ctx, next }) => {
@@ -24,7 +36,7 @@ const isAuthed = t.middleware(({ ctx, next }) => {
   });
 });
 
-export const protectedProcedure = t.procedure.use(isAuthed);
+export const protectedProcedure = publicProcedure.use(isAuthed);
 
 // Middleware to enforce specific roles
 function enforceRole(allowedRoles: Role[]) {
@@ -55,7 +67,7 @@ function enforceRole(allowedRoles: Role[]) {
 }
 
 // Staff procedure: admin or editor
-export const staffProcedure = t.procedure.use(enforceRole(["admin", "editor"]));
+export const staffProcedure = publicProcedure.use(enforceRole(["admin", "editor"]));
 
 // Admin procedure: admin only
-export const adminProcedure = t.procedure.use(enforceRole(["admin"]));
+export const adminProcedure = publicProcedure.use(enforceRole(["admin"]));

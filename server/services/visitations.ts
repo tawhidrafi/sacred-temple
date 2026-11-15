@@ -19,6 +19,45 @@ function generateVisitationRef(): string {
   return `VST-2026-${rand}`;
 }
 
+async function autoPatchVisitationsSchema(db: DrizzleD1Database<any>) {
+  const patches = [
+    `CREATE TABLE IF NOT EXISTS \`visitations\` (
+      \`id\` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+      \`ref\` text NOT NULL,
+      \`user_id\` text,
+      \`name\` text NOT NULL,
+      \`phone\` text NOT NULL,
+      \`email\` text,
+      \`visit_date\` text NOT NULL,
+      \`time_slot\` text DEFAULT 'morning' NOT NULL,
+      \`visitor_count\` integer DEFAULT 1 NOT NULL,
+      \`purpose\` text DEFAULT 'general_darshan' NOT NULL,
+      \`special_needs\` text,
+      \`status\` text DEFAULT 'confirmed' NOT NULL,
+      \`check_in_at\` integer,
+      \`handled_by\` text,
+      \`admin_notes\` text,
+      \`created_at\` integer NOT NULL,
+      \`updated_at\` integer NOT NULL,
+      FOREIGN KEY (\`user_id\`) REFERENCES \`user\`(\`id\`) ON UPDATE no action ON DELETE set null
+    )`,
+    "CREATE UNIQUE INDEX IF NOT EXISTS `visitations_ref_unique` ON `visitations` (`ref`)",
+    "CREATE INDEX IF NOT EXISTS `visitations_ref_idx` ON `visitations` (`ref`)",
+    "CREATE INDEX IF NOT EXISTS `visitations_user_id_idx` ON `visitations` (`user_id`)",
+    "CREATE INDEX IF NOT EXISTS `visitations_date_idx` ON `visitations` (`visit_date`)",
+    "CREATE INDEX IF NOT EXISTS `visitations_status_idx` ON `visitations` (`status`)",
+    "CREATE INDEX IF NOT EXISTS `visitations_slot_idx` ON `visitations` (`time_slot`)",
+  ];
+
+  for (const patch of patches) {
+    try {
+      await db.run(sql.raw(patch));
+    } catch {
+      // Ignore if table/index already exists
+    }
+  }
+}
+
 export class VisitationsService {
   /**
    * Public or authenticated devotee generates a temple darshan / visitation pass.
@@ -73,6 +112,19 @@ export class VisitationsService {
    * Public reference code lookup for visitor pass verification.
    */
   static async getByRef(db: DrizzleD1Database<typeof schema>, ref: string) {
+    try {
+      return await this.executeGetByRef(db, ref);
+    } catch (err: any) {
+      if (err?.message?.includes("visitations") || err?.message?.includes("no such table")) {
+        console.warn("[VisitationsService] Detected missing visitations table in D1, auto-patching...");
+        await autoPatchVisitationsSchema(db);
+        return await this.executeGetByRef(db, ref);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeGetByRef(db: DrizzleD1Database<typeof schema>, ref: string) {
     const rows = await db
       .select({
         id: visitations.id,
@@ -173,6 +225,22 @@ export class VisitationsService {
     db: DrizzleD1Database<typeof schema>,
     query?: ListVisitationsQuery
   ) {
+    try {
+      return await this.executeAdminList(db, query);
+    } catch (err: any) {
+      if (err?.message?.includes("visitations") || err?.message?.includes("no such table")) {
+        console.warn("[VisitationsService] Detected missing visitations table in D1, auto-patching...");
+        await autoPatchVisitationsSchema(db);
+        return await this.executeAdminList(db, query);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeAdminList(
+    db: DrizzleD1Database<typeof schema>,
+    query?: ListVisitationsQuery
+  ) {
     const page = query?.page || 1;
     const pageSize = Math.min(query?.pageSize || 20, 100);
     const offset = (page - 1) * pageSize;
@@ -241,6 +309,19 @@ export class VisitationsService {
   }
 
   static async adminGet(db: DrizzleD1Database<typeof schema>, id: number) {
+    try {
+      return await this.executeAdminGet(db, id);
+    } catch (err: any) {
+      if (err?.message?.includes("visitations") || err?.message?.includes("no such table")) {
+        console.warn("[VisitationsService] Detected missing visitations table in D1, auto-patching...");
+        await autoPatchVisitationsSchema(db);
+        return await this.executeAdminGet(db, id);
+      }
+      throw err;
+    }
+  }
+
+  private static async executeAdminGet(db: DrizzleD1Database<typeof schema>, id: number) {
     const [row] = await db
       .select()
       .from(visitations)
