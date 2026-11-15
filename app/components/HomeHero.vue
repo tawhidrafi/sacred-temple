@@ -112,7 +112,7 @@ onMounted(() => {
     if (!isPaused.value) {
       nextSlide();
     }
-  }, 5000);
+  }, 3000);
 });
 
 onBeforeUnmount(() => {
@@ -200,7 +200,7 @@ const scrollToNext = () => {
         </div>
       </div>
 
-      <!-- 2. RIGHT: HERO IMAGE SLIDER -->
+      <!-- 2. RIGHT: HERO IMAGE SLIDER (Takes full space of right column) -->
       <div
         class="hero-slider-col"
         @mouseenter="pauseSlider"
@@ -211,18 +211,9 @@ const scrollToNext = () => {
         aria-label="Sacred Temple Darshan Slider"
       >
         <div class="hero-slider-card">
-          <!-- Top Badges Overlay -->
-          <div class="slider-top-bar">
-            <div class="slider-beacon-pill">
-              <span class="beacon-dot"></span>
-              <span class="beacon-label">LIVE DARSHAN ACTIVE</span>
-            </div>
-            <span class="slider-category-badge">{{ currentSlide.badge }}</span>
-          </div>
-
-          <!-- Slide Image Viewport with Smooth Transition -->
+          <!-- Slide Image Viewport taking all space -->
           <div class="slider-image-viewport">
-            <transition name="hero-slide-fade" mode="out-in">
+            <transition name="hero-slide-fade">
               <img
                 :key="currentSlideIndex"
                 :src="currentSlide.image"
@@ -234,63 +225,74 @@ const scrollToNext = () => {
             <div class="slider-glow-layer" aria-hidden="true"></div>
           </div>
 
-          <!-- Bottom Caption & Controls Bar -->
-          <div class="slider-bottom-bar">
-            <div class="slider-caption-text">
-              <h3 class="slider-deity-title">{{ currentSlide.title }}</h3>
-              <p class="slider-deity-subtitle">{{ currentSlide.subtitle }}</p>
+          <!-- Top Badges Overlay -->
+          <div class="slider-top-bar">
+            <div class="slider-beacon-pill">
+              <span class="beacon-dot"></span>
+              <span class="beacon-label">LIVE DARSHAN ACTIVE</span>
             </div>
-
-            <!-- Controls: Prev, Counter, Next -->
-            <div class="slider-controls-wrap">
-              <button
-                type="button"
-                class="slider-nav-btn prev"
-                aria-label="Previous slide"
-                @click="prevSlide"
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fill-rule="evenodd"
-                    d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-
-              <span class="slider-counter" aria-live="polite">
-                {{ String(currentSlideIndex + 1).padStart(2, '0') }} / {{ String(heroSlides.length).padStart(2, '0') }}
-              </span>
-
-              <button
-                type="button"
-                class="slider-nav-btn next"
-                aria-label="Next slide"
-                @click="nextSlide"
-              >
-                <svg viewBox="0 0 20 20" fill="currentColor">
-                  <path
-                    fill-rule="evenodd"
-                    d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
-                    clip-rule="evenodd"
-                  />
-                </svg>
-              </button>
-            </div>
+            <span class="slider-category-badge">{{ currentSlide.badge }}</span>
           </div>
 
-          <!-- Pagination Indicator Dots -->
-          <div class="slider-dots" role="tablist" aria-label="Slider Pagination">
-            <button
-              v-for="(_, idx) in heroSlides"
-              :key="idx"
-              type="button"
-              class="slider-dot"
-              :class="{ 'is-active': idx === currentSlideIndex }"
-              :aria-label="`Go to slide ${idx + 1}`"
-              :aria-selected="idx === currentSlideIndex"
-              @click="goToSlide(idx)"
-            ></button>
+          <!-- Bottom Floating Caption & Controls Bar -->
+          <div class="slider-bottom-overlay">
+            <div class="slider-bottom-bar">
+              <div class="slider-caption-text">
+                <h3 class="slider-deity-title">{{ currentSlide.title }}</h3>
+                <p class="slider-deity-subtitle">{{ currentSlide.subtitle }}</p>
+              </div>
+
+              <!-- Controls: Prev, Counter, Next -->
+              <div class="slider-controls-wrap">
+                <button
+                  type="button"
+                  class="slider-nav-btn prev"
+                  aria-label="Previous slide"
+                  @click="prevSlide"
+                >
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M12.707 5.293a1 1 0 010 1.414L9.414 10l3.293 3.293a1 1 0 01-1.414 1.414l-4-4a1 1 0 010-1.414l4-4a1 1 0 011.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+
+                <span class="slider-counter" aria-live="polite">
+                  {{ String(currentSlideIndex + 1).padStart(2, '0') }} / {{ String(heroSlides.length).padStart(2, '0') }}
+                </span>
+
+                <button
+                  type="button"
+                  class="slider-nav-btn next"
+                  aria-label="Next slide"
+                  @click="nextSlide"
+                >
+                  <svg viewBox="0 0 20 20" fill="currentColor">
+                    <path
+                      fill-rule="evenodd"
+                      d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z"
+                      clip-rule="evenodd"
+                    />
+                  </svg>
+                </button>
+              </div>
+            </div>
+
+            <!-- Pagination Indicator Dots -->
+            <div class="slider-dots" role="tablist" aria-label="Slider Pagination">
+              <button
+                v-for="(_, idx) in heroSlides"
+                :key="idx"
+                type="button"
+                class="slider-dot"
+                :class="{ 'is-active': idx === currentSlideIndex }"
+                :aria-label="`Go to slide ${idx + 1}`"
+                :aria-selected="idx === currentSlideIndex"
+                @click="goToSlide(idx)"
+              ></button>
+            </div>
           </div>
         </div>
       </div>
@@ -462,11 +464,11 @@ const scrollToNext = () => {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 1240px;
+  max-width: 1380px;
   margin: 0 auto;
   display: grid;
-  grid-template-columns: 1.15fr 0.85fr;
-  align-items: center;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  align-items: stretch;
   gap: 3.5rem;
 }
 
@@ -474,7 +476,8 @@ const scrollToNext = () => {
   .hero-split-container {
     grid-template-columns: 1fr;
     gap: 2.5rem;
-    max-width: 620px;
+    max-width: 680px;
+    align-items: center;
   }
 }
 
@@ -482,7 +485,7 @@ const scrollToNext = () => {
   position: relative;
   z-index: 10;
   width: 100%;
-  max-width: 640px;
+  max-width: 100%;
   margin: 0;
   text-align: left;
   display: flex;
@@ -659,8 +662,9 @@ const scrollToNext = () => {
 ---------------------------------------------------- */
 .hero-slider-col {
   width: 100%;
+  height: 100%;
+  min-height: 520px;
   display: flex;
-  justify-content: center;
   position: relative;
   z-index: 10;
 }
@@ -668,7 +672,11 @@ const scrollToNext = () => {
 .hero-slider-card {
   position: relative;
   width: 100%;
-  max-width: 480px;
+  max-width: 100%;
+  height: 100%;
+  min-height: 520px;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-card);
   border: 1px solid var(--border-color);
   border-radius: 20px;
@@ -682,11 +690,43 @@ const scrollToNext = () => {
   box-shadow: 0 20px 48px var(--accent-glow);
 }
 
+.slider-image-viewport {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: #1A0D00;
+}
+
+.slider-img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+  display: block;
+}
+
+.slider-glow-layer {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0.35) 0%,
+    transparent 30%,
+    transparent 55%,
+    rgba(0, 0, 0, 0.75) 100%
+  );
+  pointer-events: none;
+}
+
 .slider-top-bar {
   position: absolute;
-  top: 1rem;
-  left: 1rem;
-  right: 1rem;
+  top: 1.25rem;
+  left: 1.25rem;
+  right: 1.25rem;
   z-index: 5;
   display: flex;
   align-items: center;
@@ -701,7 +741,7 @@ const scrollToNext = () => {
   padding: 0.35rem 0.75rem;
   background: rgba(0, 0, 0, 0.65);
   backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.2);
   border-radius: 9999px;
 }
 
@@ -727,49 +767,36 @@ const scrollToNext = () => {
   letter-spacing: 0.08em;
   text-transform: uppercase;
   padding: 0.35rem 0.75rem;
-  background: rgba(224, 165, 38, 0.9);
+  background: rgba(224, 165, 38, 0.95);
   color: #3F0A12;
   border-radius: 9999px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.slider-image-viewport {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3.4;
-  overflow: hidden;
-  background-color: #1A0D00;
-}
-
-.slider-img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  object-position: center top;
-  display: block;
-}
-
-.slider-glow-layer {
+/* Bottom Overlay Container taking minimal height over the image */
+.slider-bottom-overlay {
   position: absolute;
-  inset: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 5;
   background: linear-gradient(
     180deg,
-    rgba(0, 0, 0, 0.3) 0%,
-    transparent 35%,
-    transparent 60%,
-    rgba(0, 0, 0, 0.65) 100%
+    transparent 0%,
+    rgba(15, 10, 8, 0.65) 25%,
+    rgba(15, 10, 8, 0.92) 100%
   );
-  pointer-events: none;
+  backdrop-filter: blur(4px);
+  display: flex;
+  flex-direction: column;
 }
 
 .slider-bottom-bar {
-  padding: 1rem 1.25rem 0.75rem;
+  padding: 1.25rem 1.5rem 0.6rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  background: var(--bg-card);
-  border-top: 1px solid var(--border-subtle);
 }
 
 .slider-caption-text {
@@ -779,13 +806,14 @@ const scrollToNext = () => {
 
 .slider-deity-title {
   font-family: var(--font-serif);
-  font-size: 1.15rem;
+  font-size: 1.3rem;
   font-weight: 700;
-  color: var(--color-brand);
-  margin: 0 0 0.2rem;
+  color: #FFFFFF;
+  margin: 0 0 0.25rem;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
 }
 
 :global(.dark) .slider-deity-title {
@@ -793,8 +821,8 @@ const scrollToNext = () => {
 }
 
 .slider-deity-subtitle {
-  font-size: 0.8rem;
-  color: var(--text-secondary);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
   margin: 0;
   white-space: nowrap;
   overflow: hidden;
@@ -809,12 +837,13 @@ const scrollToNext = () => {
 }
 
 .slider-nav-btn {
-  width: 32px;
-  height: 32px;
+  width: 34px;
+  height: 34px;
   border-radius: 50%;
-  border: 1px solid var(--border-color);
-  background: var(--bg-secondary);
-  color: var(--text-primary);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(8px);
+  color: #FFFFFF;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -827,56 +856,53 @@ const scrollToNext = () => {
   background: var(--accent);
   color: #3F0A12;
   border-color: var(--accent);
-  transform: scale(1.05);
+  transform: scale(1.08);
 }
 
 .slider-nav-btn svg {
-  width: 16px;
-  height: 16px;
+  width: 18px;
+  height: 18px;
 }
 
 .slider-counter {
   font-family: monospace;
-  font-size: 0.785rem;
+  font-size: 0.825rem;
   font-weight: 700;
-  color: var(--text-muted);
+  color: var(--gold, #E0A526);
   min-width: 48px;
   text-align: center;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.6);
 }
 
 .slider-dots {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.4rem;
-  padding: 0 1.25rem 0.85rem;
-  background: var(--bg-card);
+  gap: 0.45rem;
+  padding: 0 1.5rem 1rem;
 }
 
 .slider-dot {
   width: 8px;
   height: 8px;
   border-radius: 9999px;
-  background: var(--border-color);
+  background: rgba(255, 255, 255, 0.35);
   border: none;
   cursor: pointer;
   padding: 0;
-  transition: all 0.2s ease;
+  transition: all 0.25s ease;
 }
 
 .slider-dot.is-active {
-  width: 24px;
-  background: var(--color-brand);
-}
-
-:global(.dark) .slider-dot.is-active {
-  background: var(--accent);
+  width: 26px;
+  background: var(--gold, #E0A526);
+  box-shadow: 0 0 8px rgba(224, 165, 38, 0.6);
 }
 
 /* Crossfade animation */
 .hero-slide-fade-enter-active,
 .hero-slide-fade-leave-active {
-  transition: opacity 0.4s ease;
+  transition: opacity 0.5s ease-in-out;
 }
 
 .hero-slide-fade-enter-from,
@@ -884,13 +910,28 @@ const scrollToNext = () => {
   opacity: 0;
 }
 
-@media (max-width: 480px) {
-  .hero-slider-card {
-    border-radius: 16px;
+@media (max-width: 1024px) {
+  .hero-slider-col {
+    height: 460px;
+    min-height: 460px;
   }
 
-  .slider-image-viewport {
-    aspect-ratio: 4 / 3.2;
+  .hero-slider-card {
+    height: 460px;
+    min-height: 460px;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-slider-col {
+    height: 380px;
+    min-height: 380px;
+  }
+
+  .hero-slider-card {
+    height: 380px;
+    min-height: 380px;
+    border-radius: 16px;
   }
 
   .slider-top-bar {
@@ -905,12 +946,20 @@ const scrollToNext = () => {
     padding: 0.25rem 0.6rem;
   }
 
-  .slider-deity-title {
-    font-size: 1.05rem;
+  .slider-bottom-bar {
+    padding: 0.85rem 1rem 0.5rem;
   }
 
-  .slider-bottom-bar {
-    padding: 0.85rem 1rem 0.65rem;
+  .slider-deity-title {
+    font-size: 1.1rem;
+  }
+
+  .slider-deity-subtitle {
+    font-size: 0.78rem;
+  }
+
+  .slider-dots {
+    padding: 0 1rem 0.75rem;
   }
 }
 

@@ -90,6 +90,33 @@ const onTouchEnd = (e: TouchEvent) => {
     }
   }
 };
+let autoPlayTimer: ReturnType<typeof setInterval> | null = null;
+const isPaused = ref(false);
+
+const pauseAutoPlay = () => {
+  isPaused.value = true;
+};
+
+const resumeAutoPlay = () => {
+  isPaused.value = false;
+};
+
+onMounted(() => {
+  if (count.value > 1) {
+    autoPlayTimer = setInterval(() => {
+      if (!isPaused.value) {
+        nextSlide();
+      }
+    }, 3500);
+  }
+});
+
+onUnmounted(() => {
+  if (autoPlayTimer) {
+    clearInterval(autoPlayTimer);
+    autoPlayTimer = null;
+  }
+});
 </script>
 
 <template>
@@ -105,6 +132,8 @@ const onTouchEnd = (e: TouchEvent) => {
     @keydown="handleKeyDown"
     @touchstart="onTouchStart"
     @touchend="onTouchEnd"
+    @mouseenter="pauseAutoPlay"
+    @mouseleave="resumeAutoPlay"
   >
     <div class="slider-card-frame">
       <!-- Image Viewport with Fixed Aspect Ratio (16:9 desktop, 4:3 mobile) -->

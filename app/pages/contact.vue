@@ -620,7 +620,7 @@ const handleReset = () => {
   min-height: 85vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  padding-top: calc(var(--nav-height, 72px)b);
+  padding-top: calc(var(--nav-height, 72px) + 2rem);
   padding-bottom: 5rem;
 }
 
@@ -647,7 +647,7 @@ const handleReset = () => {
 }
 
 .breadcrumb-link {
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   text-decoration: none;
   font-weight: 600;
   transition: opacity 0.15s ease;
@@ -687,26 +687,28 @@ const handleReset = () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.95rem;
-  background-color: rgba(224, 165, 38, 0.08);
+  background-color: rgba(110, 5, 22, 0.05);
   border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   margin-bottom: 1.25rem;
 }
 
 html[data-theme="dark"] .hero-badge,
 html.dark .hero-badge {
-  background-color: rgba(230, 179, 74, 0.08);
+  background-color: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.25);
+  color: var(--accent-gold);
 }
 
 .badge-dot {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background-color: var(--gold, #E0A526);
+  background-color: var(--accent);
 }
 
 .hero-title {
@@ -720,7 +722,7 @@ html.dark .hero-badge {
   font-family: inherit;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   letter-spacing: 0.02em;
 }
 
@@ -728,7 +730,7 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: clamp(2.2rem, 4.2vw, 3.4rem);
   font-weight: 800;
-  color: var(--gold, #E0A526);
+  color: var(--heading-color);
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
@@ -773,7 +775,7 @@ html.dark .hero-badge {
 .hero-divider {
   width: 56px;
   height: 2px;
-  background: var(--gold, #E0A526);
+  background: var(--accent);
   margin: 2rem auto 0;
   opacity: 0.75;
 }
@@ -813,6 +815,11 @@ html.dark .hero-badge {
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
+html[data-theme="dark"] .info-card,
+html.dark .info-card {
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+}
+
 .card-header {
   display: flex;
   align-items: center;
@@ -826,13 +833,20 @@ html.dark .hero-badge {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background-color: rgba(224, 165, 38, 0.1);
-  color: var(--gold, #E0A526);
-  border: 1px solid rgba(224, 165, 38, 0.25);
+  background-color: rgba(110, 5, 22, 0.06);
+  color: var(--accent-text);
+  border: 1px solid var(--border-subtle);
   display: flex;
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+}
+
+html[data-theme="dark"] .card-icon-wrap,
+html.dark .card-icon-wrap {
+  background-color: rgba(212, 175, 55, 0.1);
+  color: var(--accent-gold);
+  border: 1px solid rgba(212, 175, 55, 0.25);
 }
 
 .card-icon-wrap svg {
@@ -844,7 +858,7 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--heading-color);
   margin: 0;
   line-height: 1.2;
 }
@@ -861,7 +875,7 @@ html.dark .hero-badge {
   display: block;
   font-size: 1.05rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   margin-bottom: 0.5rem;
 }
 
@@ -884,24 +898,25 @@ html.dark .hero-badge {
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 1.15rem;
-  background: rgba(224, 165, 38, 0.08);
-  border: 1px solid var(--gold, #E0A526);
+  background: transparent;
+  border: 1px solid var(--border-color);
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .btn-directions:hover {
-  background: var(--gold, #E0A526);
-  color: #161B22;
+  background: var(--accent);
+  color: var(--btn-primary-text);
+  border-color: var(--accent);
 }
 
 .btn-directions:hover svg {
-  color: #161B22;
-  fill: #161B22;
+  color: var(--btn-primary-text);
+  fill: currentColor;
 }
 
 .action-icon {
@@ -952,7 +967,7 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   white-space: nowrap;
 }
 
@@ -961,6 +976,11 @@ html.dark .hero-badge {
   padding: 0.65rem 0.85rem;
   border-radius: 6px;
   border-bottom: none;
+}
+
+html[data-theme="dark"] .highlight-row,
+html.dark .highlight-row {
+  background: rgba(212, 175, 55, 0.1);
 }
 
 /* Contacts Channels List */
@@ -980,6 +1000,12 @@ html.dark .hero-badge {
   border-radius: 8px;
 }
 
+html[data-theme="dark"] .channel-item,
+html.dark .channel-item {
+  background: var(--bg-secondary);
+  border-color: var(--border-subtle);
+}
+
 .channel-info {
   display: flex;
   flex-direction: column;
@@ -997,7 +1023,7 @@ html.dark .hero-badge {
 .channel-link {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   text-decoration: none;
   transition: opacity 0.15s ease;
 }
@@ -1010,9 +1036,9 @@ html.dark .hero-badge {
 .channel-action-btn {
   padding: 0.35rem 0.85rem;
   border-radius: 6px;
-  background: rgba(224, 165, 38, 0.08);
-  border: 1px solid rgba(224, 165, 38, 0.4);
-  color: var(--gold, #E0A526);
+  background: transparent;
+  border: 1px solid var(--border-color);
+  color: var(--accent-text);
   font-size: 0.8125rem;
   font-weight: 700;
   text-decoration: none;
@@ -1020,14 +1046,21 @@ html.dark .hero-badge {
 }
 
 .channel-action-btn:hover {
-  background: var(--gold, #E0A526);
-  color: #161B22;
+  background: var(--accent);
+  color: var(--btn-primary-text);
+  border-color: var(--accent);
 }
 
 .whatsapp-btn {
   background: rgba(37, 211, 102, 0.12) !important;
   border-color: rgba(37, 211, 102, 0.4) !important;
   color: #128C7E !important;
+}
+
+html[data-theme="dark"] .whatsapp-btn,
+html.dark .whatsapp-btn {
+  color: #4ADE80 !important;
+  border-color: rgba(74, 222, 128, 0.3) !important;
 }
 
 .whatsapp-btn:hover {
@@ -1040,13 +1073,19 @@ html.dark .hero-badge {
   display: flex;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(224, 165, 38, 0.1);
-  border: 1px solid rgba(224, 165, 38, 0.4);
+  background: rgba(110, 5, 22, 0.05);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
 }
 
+html[data-theme="dark"] .notice-card,
+html.dark .notice-card {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
 .notice-icon {
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   flex-shrink: 0;
   width: 24px;
   height: 24px;
@@ -1055,7 +1094,7 @@ html.dark .hero-badge {
 .notice-title {
   font-size: 0.9375rem;
   font-weight: 800;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   margin: 0 0 0.25rem;
 }
 
@@ -1075,6 +1114,11 @@ html.dark .hero-badge {
   box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
 }
 
+html[data-theme="dark"] .inquiry-form-card,
+html.dark .inquiry-form-card {
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
+}
+
 @media (max-width: 640px) {
   .inquiry-form-card {
     padding: 1.5rem;
@@ -1091,7 +1135,7 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--gold, #E0A526);
+  color: var(--heading-color);
   margin: 0 0 0.25rem;
 }
 
@@ -1099,7 +1143,7 @@ html.dark .hero-badge {
   display: block;
   font-size: 0.9rem;
   font-weight: 600;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   margin-bottom: 0.5rem;
 }
 
@@ -1121,6 +1165,13 @@ html.dark .hero-badge {
   border: 1px solid #F87171;
   border-radius: 8px;
   color: #991B1B;
+}
+
+html[data-theme="dark"] .alert-error,
+html.dark .alert-error {
+  background-color: rgba(239, 68, 68, 0.12);
+  border-color: rgba(239, 68, 68, 0.4);
+  color: #FCA5A5;
 }
 
 .alert-icon {
@@ -1238,8 +1289,8 @@ html.dark .hero-badge {
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
-  border-color: var(--gold, #E0A526);
-  box-shadow: 0 0 0 3px rgba(224, 165, 38, 0.2);
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 .form-textarea {
@@ -1265,7 +1316,7 @@ html.dark .hero-badge {
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   pointer-events: none;
 }
 
@@ -1306,10 +1357,16 @@ html.dark .hero-badge {
   color: var(--text-secondary);
 }
 
+html[data-theme="dark"] .assurance-pill,
+html.dark .assurance-pill {
+  background: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.25);
+}
+
 .assurance-icon {
   width: 16px;
   height: 16px;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   flex-shrink: 0;
 }
 
@@ -1321,9 +1378,9 @@ html.dark .hero-badge {
 .btn-submit {
   width: 100%;
   padding: 0.95rem 1.5rem;
-  background: var(--maroon, #6E0516);
-  color: #FFFFFF;
-  border: 1px solid var(--border-color);
+  background: var(--btn-primary-bg);
+  color: var(--btn-primary-text);
+  border: 1px solid var(--btn-primary-bg);
   border-radius: 9px;
   font-size: 1rem;
   font-weight: 800;
@@ -1332,14 +1389,15 @@ html.dark .hero-badge {
   align-items: center;
   justify-content: center;
   gap: 0.65rem;
-  box-shadow: 0 4px 14px rgba(110, 5, 22, 0.25);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
   transition: all 0.2s ease;
 }
 
 .btn-submit:hover:not(:disabled) {
-  background: var(--maroon-deep, #3F0A12);
+  background: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(110, 5, 22, 0.35);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.2);
 }
 
 .btn-submit:disabled {
@@ -1416,14 +1474,14 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--gold, #E0A526);
+  color: var(--heading-color);
   margin: 0 0 0.25rem;
 }
 
 .success-subtitle-bn {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   margin: 0 0 1rem;
 }
 
@@ -1442,9 +1500,15 @@ html.dark .hero-badge {
   gap: 0.25rem;
   padding: 0.75rem 1.5rem;
   background: rgba(224, 165, 38, 0.12);
-  border: 1px dashed var(--gold, #E0A526);
+  border: 1px dashed var(--accent);
   border-radius: 8px;
   margin-bottom: 1.25rem;
+}
+
+html[data-theme="dark"] .reference-box,
+html.dark .reference-box {
+  background: rgba(212, 175, 55, 0.1);
+  border-color: rgba(212, 175, 55, 0.4);
 }
 
 .ref-label {
@@ -1459,7 +1523,7 @@ html.dark .hero-badge {
   font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--gold, #E0A526);
+  color: var(--accent-text);
   letter-spacing: 0.05em;
 }
 
@@ -1474,8 +1538,8 @@ html.dark .hero-badge {
 .btn-reset {
   padding: 0.75rem 1.5rem;
   background: transparent;
-  border: 1.5px solid var(--gold, #E0A526);
-  color: var(--gold, #E0A526);
+  border: 1.5px solid var(--border-color);
+  color: var(--accent-text);
   border-radius: 8px;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -1484,8 +1548,9 @@ html.dark .hero-badge {
 }
 
 .btn-reset:hover {
-  background: var(--gold, #E0A526);
-  color: #161B22;
+  background: var(--accent);
+  color: var(--btn-primary-text);
+  border-color: var(--accent);
 }
 
 /* --------------------------------------------------------------------------
@@ -1497,16 +1562,16 @@ html[data-theme="dark"] .contact-page .form-select,
 html.dark .contact-page .form-input,
 html.dark .contact-page .form-textarea,
 html.dark .contact-page .form-select {
-  background-color: #161B22;
-  border-color: rgba(212, 175, 55, 0.25);
-  color: #F7EFE0;
+  background-color: var(--bg-secondary);
+  border-color: var(--border-color);
+  color: var(--text-primary);
 }
 
 html[data-theme="dark"] .contact-page .form-input::placeholder,
 html[data-theme="dark"] .contact-page .form-textarea::placeholder,
 html.dark .contact-page .form-input::placeholder,
 html.dark .contact-page .form-textarea::placeholder {
-  color: rgba(247, 239, 224, 0.55);
+  color: var(--text-secondary);
 }
 
 html[data-theme="dark"] .contact-page .form-input:focus,
@@ -1515,9 +1580,9 @@ html[data-theme="dark"] .contact-page .form-select:focus,
 html.dark .contact-page .form-input:focus,
 html.dark .contact-page .form-textarea:focus,
 html.dark .contact-page .form-select:focus {
-  background-color: #1F242C;
-  border-color: var(--gold, #D4AF37);
-  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+  background-color: #252B33;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-glow);
 }
 
 html[data-theme="dark"] .contact-page .has-error .form-input,
@@ -1527,6 +1592,7 @@ html.dark .contact-page .has-error .form-input,
 html.dark .contact-page .has-error .form-textarea,
 html.dark .contact-page .has-error .form-select {
   border-color: #EF4444;
-  background-color: rgba(239, 68, 68, 0.1);
+  background-color: rgba(239, 68, 68, 0.12);
+  color: #FFFFFF;
 }
 </style>

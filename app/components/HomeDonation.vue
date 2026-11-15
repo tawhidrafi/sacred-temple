@@ -21,7 +21,7 @@ const { donationData } = useTempleData();
     v-if="variant === 'classic'"
     id="donation-section"
     class="donation-section"
-    aria-label="Temple Donation and Seva Support"
+    aria-label="Temple Donation and Support"
   >
     <div class="donation-container">
       <span class="section-badge">{{ donationData.badge }}</span>
@@ -42,9 +42,6 @@ const { donationData } = useTempleData();
               clip-rule="evenodd"
             />
           </svg>
-        </NuxtLink>
-        <NuxtLink :to="donationData.secondCtaLink" class="btn btn-secondary">
-          <span>{{ donationData.secondCtaText }}</span>
         </NuxtLink>
       </div>
 
@@ -76,12 +73,6 @@ const { donationData } = useTempleData();
           <p class="banner-desc">
             {{ donationData.subtitle }}
           </p>
-          <div class="trust-pill">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="trust-icon">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-            <span>{{ donationData.trustBadge }}</span>
-          </div>
         </div>
 
         <div class="banner-right">

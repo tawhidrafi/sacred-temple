@@ -93,12 +93,12 @@ defineProps<{
 .about-hero-band.is-dark,
 :global(html[data-theme="dark"]) .about-hero-band,
 :global(html.dark) .about-hero-band {
-  background-color: var(--brand-deep, #0D0A15);
+  background-color: var(--bg-secondary, #161B22);
   background-image: linear-gradient(
     180deg,
-    var(--brand-deep, #0D0A15) 0%,
-    var(--nav-bg, #241B36) 100%
+    var(--bg-secondary, #161B22) 0%,
+    var(--bg-card, #1C2128) 100%
   );
-  border-bottom-color: var(--accent, #D7263D);
+  border-bottom-color: var(--accent, #D4AF37);
 }
 </style>

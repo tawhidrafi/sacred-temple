@@ -23,13 +23,48 @@ const heroSubtitle = computed(() => {
   return hero.value.subtitle || "";
 });
 
-// Optional Slider Images (Gracefully empty if not present in current data model)
+// Static fallback images for About page slider
+const defaultAboutImages: SliderImage[] = [
+  {
+    src: "/images/optimized/kali.jpg",
+    alt: "Maa Bhavatarini Kali - Presiding Sanctum Deity of Golpahar Mandir",
+    caption: "Maa Bhavatarini Kali — Presiding Sanctum Deity of Golpahar Mandir",
+  },
+  {
+    src: "/images/optimized/shiva.jpg",
+    alt: "Lord Mahadeva Shiva - Eternal Consciousness & Sacred Shrine",
+    caption: "Lord Mahadeva Shiva — Eternal Consciousness & Auspicious Lingam",
+  },
+  {
+    src: "/images/optimized/krishna.jpg",
+    alt: "Sri Sri Radha Krishna - Divine Love & Eternal Bhakti",
+    caption: "Sri Sri Radha Krishna — Sanctum Altar of Divine Love",
+  },
+  {
+    src: "/images/optimized/ganesha.jpg",
+    alt: "Lord Vighnaharta Ganesha - Remover of Obstacles",
+    caption: "Lord Vighnaharta Ganesha — Sacred Darshan",
+  },
+  {
+    src: "/images/optimized/lakshmi.jpg",
+    alt: "Maa Mahalakshmi - Goddess of Prosperity & Auspicious Grace",
+    caption: "Maa Mahalakshmi — Holy Shrine of Divine Grace",
+  },
+];
+
+// Slider Images (Use customImages if configured in CMS, otherwise fallback to static temple images)
 const sliderImages = computed<SliderImage[]>(() => {
   const customImages = (about.value as any)?.images;
   if (Array.isArray(customImages) && customImages.length > 0) {
-    return customImages;
+    return customImages.map((img: any) => ({
+      src: img.src || img.url || "",
+      alt: img.alt || "Temple photo",
+      caption: img.caption || img.alt || "",
+      width: img.width || 1280,
+      height: img.height || 720,
+    }));
   }
-  return [];
+  return defaultAboutImages;
 });
 
 const hasSlider = computed(() => sliderImages.value.length > 0);
@@ -148,8 +183,8 @@ useHead({
 .about-page.is-dark,
 :global(html[data-theme="dark"]) .about-page,
 :global(html.dark) .about-page {
-  background-color: var(--midnight, #14101F) !important;
-  color: var(--ivory, #F3EBDD) !important;
+  background-color: var(--bg-primary, #21262D) !important;
+  color: var(--text-primary, #FFFFFF) !important;
 }
 
 /* Vertical Rhythm */

@@ -324,16 +324,16 @@ export const initialTempleData: HomePageData = {
     },
   ],
   donation: {
-    badge: "Sacred Giving • Seva",
+    badge: "Sacred Giving",
     title: "Support the Sanctum & Partake in",
     titleHighlight: "Sacred Seva",
     subtitle:
       "Every sacred offering directly nourishes devotees through daily Annadanam, sustains Vedic worship and aartis, and helps preserve our holy sanctuary for generations to come.",
-    firstCtaText: "Make an Offering",
+    firstCtaText: "Make a Donation",
     firstCtaLink: "/donation",
     secondCtaText: "Explore All Seva Causes",
     secondCtaLink: "/donation",
-    trustBadge: "Official Temple Trust • 100% Transparency",
+    trustBadge: "",
   },
 };
 

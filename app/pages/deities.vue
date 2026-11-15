@@ -207,15 +207,8 @@ useHead({
                 @click="openDarshan(deity)"
                 :aria-label="`Open sacred darshan for ${deity.name}`"
               >
-                Sacred Darshan
+                Quick Overview
               </button>
-              <NuxtLink
-                to="/puja-booking"
-                class="btn-puja-link"
-                :aria-label="`Book a puja for ${deity.name}`"
-              >
-                Offer Puja
-              </NuxtLink>
             </div>
           </div>
         </article>
@@ -287,13 +280,6 @@ useHead({
                 >
                   Book Puja Offering
                 </NuxtLink>
-                <button
-                  type="button"
-                  class="btn-secondary-action"
-                  @click="closeDarshan"
-                >
-                  Return to Deities
-                </button>
               </div>
             </div>
           </div>
