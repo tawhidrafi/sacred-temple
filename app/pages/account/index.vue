@@ -42,7 +42,7 @@ watchEffect(() => {
               clip-rule="evenodd"
             />
           </svg>
-          <span>Sanctum Admin Console</span>
+          <span>Mandir Admin Console</span>
         </NuxtLink>
       </div>
 

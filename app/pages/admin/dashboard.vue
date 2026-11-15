@@ -15,9 +15,10 @@ import {
   FONT_OPTIONS_BODY,
   THEME_PALETTES,
 } from "~~/shared/schemas/siteSettings";
+import { SITE_NAME, SITE_SHORT_NAME } from "~~/shared/constants/brand";
 
 useHead({
-  title: "Sanctum Dashboard - Temple Console",
+  title: `${SITE_NAME} - Admin Console`,
 });
 
 const { isAuthenticated, isPending, isStaff, isAdmin, isEditor, currentUser, role, logout } = useAuth();
@@ -1933,7 +1934,7 @@ const executeDeleteEvent = async () => {
         <NuxtLink to="/" class="sidebar-logo">
           
           <div class="logo-text">
-            <span class="brand-title">SANCTUM</span>
+            <span class="brand-title">{{ SITE_NAME }}</span>
             <span class="brand-tag">{{ isAdmin ? 'Admin Console' : 'Editor Console' }}</span>
           </div>
         </NuxtLink>
@@ -1978,7 +1979,7 @@ const executeDeleteEvent = async () => {
             {{ (currentUser?.name || "Admin").slice(0, 2).toUpperCase() }}
           </div>
           <div class="user-details">
-            <span class="user-name">{{ currentUser?.name || "Sanctum User" }}</span>
+            <span class="user-name">{{ currentUser?.name || `${SITE_SHORT_NAME} User` }}</span>
             <span class="user-role-badge" :class="isAdmin ? 'role-admin' : 'role-editor'">
               {{ isAdmin ? "Super Admin" : "Content Editor" }}
             </span>
@@ -2006,7 +2007,7 @@ const executeDeleteEvent = async () => {
           </button>
 
           <div class="breadcrumb">
-            <span class="crumb-root">Sanctum</span>
+            <span class="crumb-root" :title="SITE_NAME">{{ SITE_NAME }}</span>
             <span class="crumb-sep">/</span>
             <span class="crumb-active">
               {{
@@ -2043,12 +2044,6 @@ const executeDeleteEvent = async () => {
             <span>Messages</span>
             <span v-if="newMessagesCount > 0" class="topbar-badge">{{ newMessagesCount }}</span>
           </button>
-
-          <!-- Status Pill -->
-          <div class="status-pill">
-            <span class="status-dot"></span>
-            <span>Live</span>
-          </div>
 
           <!-- Public site shortcut -->
           <NuxtLink to="/" target="_blank" class="btn-live-site">
@@ -2170,7 +2165,7 @@ const executeDeleteEvent = async () => {
           <!-- Quick Navigation Panel -->
           <div class="dash-panel">
             <div class="panel-head">
-              <h2 class="panel-title">Sanctum Operations</h2>
+              <h2 class="panel-title">{{ SITE_SHORT_NAME }} Operations</h2>
               <span class="panel-tag">Quick Actions</span>
             </div>
             <div class="quick-actions-grid">
@@ -2285,7 +2280,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingSchedule" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading daily rituals from Sanctum database...</span>
+              <span>Loading daily rituals from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredSchedule.length === 0" class="empty-state">
@@ -2459,13 +2454,13 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingPujas" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading sacred puja offerings from Sanctum database...</span>
+              <span>Loading sacred puja offerings from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredPujas.length === 0" class="empty-state">
               <h3 class="empty-title">No puja offerings found</h3>
               <p class="empty-desc">
-                {{ pujaSearchQuery ? 'No pujas match your search filter.' : 'No puja offerings have been configured in Sanctum yet.' }}
+                {{ pujaSearchQuery ? 'No pujas match your search filter.' : 'No puja offerings have been configured in ' + SITE_SHORT_NAME + ' yet.' }}
               </p>
               <button type="button" class="btn-add-primary" @click="openAddPujaModal">
                 <span>+ Add First Puja Offering</span>
@@ -2694,7 +2689,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingEvents" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading temple events from Sanctum database...</span>
+              <span>Loading temple events from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredEvents.length === 0" class="empty-state">
@@ -2851,7 +2846,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingDeities" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading sacred deity profiles from Sanctum database...</span>
+              <span>Loading sacred deity profiles from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredDeities.length === 0" class="empty-state">
@@ -3050,7 +3045,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingNotices" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading notice board entries from Sanctum database...</span>
+              <span>Loading notice board entries from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredNotices.length === 0" class="empty-state">
@@ -3218,7 +3213,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingBookings" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading puja bookings from Sanctum database...</span>
+              <span>Loading puja bookings from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredBookings.length === 0" class="empty-state">
@@ -3856,7 +3851,7 @@ const executeDeleteEvent = async () => {
                   <label class="form-label">Default Theme Mode</label>
                   <select v-model="siteSettingsData.theme.defaultThemeMode" class="form-select" style="max-width: 280px;">
                     <option value="light">Light Mode (Sacred Sindoor &amp; Gold)</option>
-                    <option value="dark">Dark Mode (Deep Nocturnal Sanctum)</option>
+                    <option value="dark">Dark Mode (Deep Nocturnal {{ SITE_SHORT_NAME }})</option>
                     <option value="system">Follow User System Preference</option>
                   </select>
                 </div>
@@ -4113,7 +4108,7 @@ const executeDeleteEvent = async () => {
           <div class="schedule-table-card">
             <div v-if="loadingMessages" class="loading-state">
               <div class="spinner"></div>
-              <span>Loading contact messages from Sanctum database...</span>
+              <span>Loading contact messages from {{ SITE_SHORT_NAME }} database...</span>
             </div>
 
             <div v-else-if="filteredMessages.length === 0" class="empty-state">
@@ -5409,11 +5404,17 @@ const executeDeleteEvent = async () => {
 }
 
 .brand-title {
-  font-size: 1rem;
+  font-size: 0.8rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.02em;
   color: var(--adm-text-main);
-  line-height: 1.1;
+  line-height: 1.15;
+  max-width: 190px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-tag {
@@ -5690,6 +5691,12 @@ const executeDeleteEvent = async () => {
 
 .crumb-root {
   color: var(--adm-text-muted);
+  max-width: 240px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: inline-block;
+  vertical-align: bottom;
 }
 
 .crumb-sep {
@@ -5752,25 +5759,7 @@ const executeDeleteEvent = async () => {
   line-height: 1;
 }
 
-.status-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  padding: 0.3rem 0.65rem;
-  border-radius: 9999px;
-  background: #ecfdf5;
-  border: 1px solid #a7f3d0;
-  font-size: 0.75rem;
-  font-weight: 600;
-  color: #047857;
-}
 
-.status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: #10b981;
-}
 
 .btn-live-site {
   display: inline-flex;
@@ -7908,6 +7897,7 @@ input:checked + .switch-slider-blue {
    ==================================================== */
 @media (max-width: 768px) {
   .admin-topbar { padding: 0 1.25rem; }
+  .crumb-root { max-width: 140px; }
   .dashboard-body { padding: 1.25rem 1rem 3rem; }
   .schedule-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
   .actions-col { width: 100%; justify-content: flex-end; }

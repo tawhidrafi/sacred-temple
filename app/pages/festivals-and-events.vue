@@ -106,8 +106,13 @@ const { data: eventsResponse, status: eventsStatus } = await useFetch<{ items: a
 );
 
 // Filter state
-type FilterTab = "all" | "upcoming" | "festival" | "special_puja";
-const activeFilter = ref<FilterTab>("all");
+const route = useRoute();
+type FilterTab = "all" | "upcoming" | "festival";
+const routeFilter = route.query.filter as string | undefined;
+const initialFilter: FilterTab = routeFilter === "upcoming" || routeFilter === "festival"
+  ? (routeFilter as FilterTab)
+  : "all";
+const activeFilter = ref<FilterTab>(initialFilter);
 
 // Today's ISO date string
 const todayIso = new Date().toISOString().slice(0, 10);
@@ -140,9 +145,6 @@ const displayedEvents = computed<EventDisplayItem[]>(() => {
     }
     if (activeFilter.value === "festival") {
       return event.kind === "festival";
-    }
-    if (activeFilter.value === "special_puja") {
-      return event.kind === "special_puja";
     }
     return true;
   });
@@ -235,14 +237,6 @@ useHead({
         >
           Major Festivals
         </button>
-        <button
-          type="button"
-          class="filter-tab-btn"
-          :class="{ 'tab-active': activeFilter === 'special_puja' }"
-          @click="activeFilter = 'special_puja'"
-        >
-          Special Pujas &amp; Vratas
-        </button>
       </div>
 
       <!-- Loading State -->
@@ -304,19 +298,16 @@ useHead({
       <!-- 4. BOTTOM SEVA & VISITOR ADVISORY CARD -->
       <section class="festival-info-card" aria-label="Devotee Festival Information">
         <div class="info-content">
-          <span class="info-kicker">Festival Participation</span>
-          <h2 class="info-title">Sponsor Annadanam &amp; Festival Seva</h2>
+          <span class="info-kicker">Festival Donation</span>
+          <h2 class="info-title">Donate to Annadanam &amp; Festival Seva</h2>
           <p class="info-text">
-            During major festivals such as Kartika Purnima and Maha Shivaratri, thousands of pilgrims visit the sanctum.
-            Devotees may sponsor the holy Annadanam feast, sacred flowers, or deepam lamps in memory of loved ones.
+            During major festivals such as Kartika Purnima and Maha Shivaratri, thousands of pilgrims visit the Mandir.
+            Devotees may donate towards the holy Annadanam feast, sacred flowers, or deepam lamps in memory of loved ones.
           </p>
         </div>
         <div class="info-actions">
           <NuxtLink to="/donation" class="btn-primary-action">
-            Sponsor Seva
-          </NuxtLink>
-          <NuxtLink to="/contact" class="btn-secondary-action">
-            Contact Temple Office
+            Donate Now
           </NuxtLink>
         </div>
       </section>
@@ -632,6 +623,7 @@ html.dark .event-card:hover {
   flex-wrap: wrap;
   gap: 0.85rem;
   flex-shrink: 0;
+  align-items: center;
 }
 
 .btn-primary-action {
@@ -653,23 +645,19 @@ html.dark .event-card:hover {
   border-color: var(--btn-primary-hover);
 }
 
-.btn-secondary-action {
-  padding: 0.75rem 1.4rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: all 0.15s ease;
-}
+@media (max-width: 799px) {
+  .festival-info-card {
+    align-items: stretch;
+  }
 
-.btn-secondary-action:hover {
-  background-color: var(--nav-hover-bg);
-  border-color: var(--accent);
+  .info-actions {
+    width: 100%;
+  }
+
+  .info-actions .btn-primary-action {
+    width: 100%;
+    display: block;
+  }
 }
 
 .loading-state,

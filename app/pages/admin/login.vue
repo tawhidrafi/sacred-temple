@@ -1,9 +1,10 @@
 <script setup lang="ts">
 import { ref, watchEffect } from "vue";
 import { useAuth } from "~/composables/useAuth";
+import { SITE_NAME, SITE_SHORT_NAME } from "~~/shared/constants/brand";
 
 useHead({
-  title: "Sanctum Login - Temple Console",
+  title: `${SITE_NAME} - Admin Login`,
 });
 
 const { isAuthenticated, isPending, isStaff, isUser, login } = useAuth();
@@ -92,7 +93,7 @@ const fillDemoCredentials = () => {
             </svg>
           </div>
           <span class="badge-role">SUPER ADMIN GATEWAY</span>
-          <h1 class="login-title">Sanctum Console</h1>
+          <h1 class="login-title">{{ SITE_SHORT_NAME }} Console</h1>
           <p class="login-subtitle">Authenticate to manage rituals, sevas, deities, and temple records</p>
         </div>
 
@@ -179,7 +180,7 @@ const fillDemoCredentials = () => {
             class="btn-submit"
             :disabled="isLoading"
           >
-            <span v-if="!isLoading" class="btn-text">Sign In to Sanctum Console &rarr;</span>
+            <span v-if="!isLoading" class="btn-text">Sign In to {{ SITE_SHORT_NAME }} Console &rarr;</span>
             <span v-else class="btn-loading">
               <span class="btn-spinner"></span>
               Authenticating...

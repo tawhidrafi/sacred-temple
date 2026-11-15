@@ -13,14 +13,6 @@ interface PujaDisplayItem {
   sortOrder: number;
 }
 
-interface ScheduleDisplayItem {
-  id: number;
-  time: string;
-  title: string;
-  description: string;
-  sortOrder: number;
-}
-
 // Canonical default pujas fallback
 const defaultPujas: PujaDisplayItem[] = [
   {
@@ -69,59 +61,11 @@ const defaultPujas: PujaDisplayItem[] = [
   },
 ];
 
-// Canonical default daily schedule fallback
-const defaultSchedule: ScheduleDisplayItem[] = [
-  {
-    id: 1,
-    time: "05:00",
-    title: "Mangal Aarti",
-    description: "The sanctum opens, the sacred lamp is lit, and the divine mother is awoken with conch and bell resonance.",
-    sortOrder: 1,
-  },
-  {
-    id: 2,
-    time: "07:00",
-    title: "Nitya Puja",
-    description: "Daily morning worship: snana, dressing, fresh floral garlands, sacred incense, and morning bhog.",
-    sortOrder: 2,
-  },
-  {
-    id: 3,
-    time: "12:30",
-    title: "Madhyanha Bhog",
-    description: "Traditional consecrated rice, lentils, vegetables, and sweets offered, followed by distribution to devotees.",
-    sortOrder: 3,
-  },
-  {
-    id: 4,
-    time: "18:30",
-    title: "Sandhya Aarti",
-    description: "The sacred evening lamp offering with resonant bells and conch. The temple's most vibrant darshan period.",
-    sortOrder: 4,
-  },
-  {
-    id: 5,
-    time: "21:30",
-    title: "Shayan Aarti",
-    description: "The concluding evening prayers and devotional bedtime lullaby. The sanctum doors close for the night.",
-    sortOrder: 5,
-  },
-];
-
 // Fetch pujas from public API
 const { data: pujasResponse, status: pujasStatus } = await useFetch<{ items: any[] }>(
   "/api/public/pujas",
   {
     key: "public_pujas_list",
-    server: true,
-  }
-);
-
-// Fetch daily schedule from public API
-const { data: scheduleResponse } = await useFetch<{ items: any[] }>(
-  "/api/public/schedule",
-  {
-    key: "public_schedule_list",
     server: true,
   }
 );
@@ -147,34 +91,6 @@ const displayedPujas = computed<PujaDisplayItem[]>(() => {
   }
   return defaultPujas;
 });
-
-// Format and sort schedule
-const displayedSchedule = computed<ScheduleDisplayItem[]>(() => {
-  const items = scheduleResponse.value?.items;
-  if (Array.isArray(items) && items.length > 0) {
-    return items
-      .filter((s) => s.active !== false)
-      .map((s) => ({
-        id: s.id,
-        time: s.time || "",
-        title: typeof s.title === "object" ? s.title?.en || s.title?.bn || "Aarti" : s.title || "Aarti",
-        description: typeof s.description === "object" ? s.description?.en || s.description?.bn || "" : s.description || "",
-        sortOrder: s.sortOrder ?? 0,
-      }))
-      .sort((a, b) => (a.time > b.time ? 1 : -1));
-  }
-  return defaultSchedule;
-});
-
-const formatTime12h = (time24: string) => {
-  if (!time24) return "";
-  const [hStr, mStr] = time24.split(":");
-  const h = parseInt(hStr || "0", 10);
-  const m = mStr || "00";
-  const ampm = h >= 12 ? "PM" : "AM";
-  const displayH = h % 12 || 12;
-  return `${displayH}:${m} ${ampm}`;
-};
 
 useHead({
   title: "Puja & Daily Rituals - Golpahar Mohashoshan Kali Mandir",
@@ -213,35 +129,7 @@ useHead({
     </header>
 
     <main class="page-container">
-      <!-- 2. DAILY AARTI SCHEDULE SECTION -->
-      <section class="schedule-section" aria-label="Daily Aarti Schedule">
-        <div class="section-header">
-          <span class="section-kicker">Sanctum Rhythm</span>
-          <h2 class="section-title">Daily Aarti &amp; Darshan Schedule</h2>
-          <p class="section-sub">
-            The temple gates and inner sanctum open according to five canonical daily worship hours:
-          </p>
-        </div>
-
-        <div class="schedule-timeline">
-          <article
-            v-for="(item, idx) in displayedSchedule"
-            :key="item.id || idx"
-            class="timeline-card"
-          >
-            <div class="time-badge">
-              <span class="time-main">{{ formatTime12h(item.time) }}</span>
-              <span class="time-step">Ritual {{ String(idx + 1).padStart(2, '0') }}</span>
-            </div>
-            <div class="timeline-body">
-              <h3 class="ritual-title">{{ item.title }}</h3>
-              <p class="ritual-desc">{{ item.description }}</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- 3. PUJA OFFERINGS & CHARGES SECTION -->
+      <!-- 2. PUJA OFFERINGS & CHARGES SECTION -->
       <section class="pujas-section" aria-label="Puja Offerings and Seva Charges">
         <div class="section-header">
           <span class="section-kicker">Devotee Offerings</span>
@@ -306,9 +194,6 @@ useHead({
         <div class="visitation-actions">
           <NuxtLink to="/contact" class="btn-primary-action">
             Contact Devotee Desk
-          </NuxtLink>
-          <NuxtLink to="/deities" class="btn-secondary-action">
-            View Sacred Deities
           </NuxtLink>
         </div>
       </section>
@@ -418,86 +303,6 @@ html.dark .hero-badge {
 .section-sub {
   font-size: 0.975rem;
   line-height: 1.6;
-  color: var(--text-secondary);
-  margin: 0;
-}
-
-/* ====================================================
-   SCHEDULE TIMELINE CARDS
-   ==================================================== */
-.schedule-section {
-  margin-bottom: 5rem;
-}
-
-.schedule-timeline {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 1.25rem;
-}
-
-@media (min-width: 768px) {
-  .schedule-timeline {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1024px) {
-  .schedule-timeline {
-    grid-template-columns: repeat(5, 1fr);
-    gap: 1rem;
-  }
-}
-
-.timeline-card {
-  background-color: var(--bg-card);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  padding: 1.5rem 1.25rem;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-.timeline-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
-}
-
-.time-badge {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  margin-bottom: 1rem;
-  padding-bottom: 0.75rem;
-  border-bottom: 1px solid var(--border-subtle);
-}
-
-.time-main {
-  font-family: var(--font-serif);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent-text);
-}
-
-.time-step {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--text-muted);
-}
-
-.ritual-title {
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  margin: 0 0 0.5rem;
-}
-
-.ritual-desc {
-  font-size: 0.875rem;
-  line-height: 1.55;
   color: var(--text-secondary);
   margin: 0;
 }
@@ -704,6 +509,7 @@ html.dark .puja-card:hover {
   flex-wrap: wrap;
   gap: 0.85rem;
   flex-shrink: 0;
+  align-items: center;
 }
 
 .btn-primary-action {
@@ -725,23 +531,19 @@ html.dark .puja-card:hover {
   border-color: var(--btn-primary-hover);
 }
 
-.btn-secondary-action {
-  padding: 0.75rem 1.4rem;
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  background-color: transparent;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  text-decoration: none;
-  display: inline-block;
-  text-align: center;
-  transition: all 0.15s ease;
-}
+@media (max-width: 799px) {
+  .visitation-card {
+    align-items: stretch;
+  }
 
-.btn-secondary-action:hover {
-  background-color: var(--nav-hover-bg);
-  border-color: var(--accent);
+  .visitation-actions {
+    width: 100%;
+  }
+
+  .visitation-actions .btn-primary-action {
+    width: 100%;
+    display: block;
+  }
 }
 
 .loading-state {

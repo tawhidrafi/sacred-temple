@@ -196,7 +196,7 @@ const handleReset = () => {
         <div class="hero-quick-status">
           <div class="status-item">
             <span class="status-indicator"></span>
-            <span>Sanctum Open Daily</span>
+            <span>Mandir Open Daily</span>
           </div>
           <div class="status-divider" aria-hidden="true">·</div>
           <div class="status-item">
@@ -207,6 +207,8 @@ const handleReset = () => {
             <span>Evening 04:30 PM – 09:30 PM</span>
           </div>
         </div>
+
+        <div class="hero-divider" aria-hidden="true"></div>
       </div>
     </header>
 
@@ -260,57 +262,6 @@ const handleReset = () => {
                     </svg>
                   </a>
                 </div>
-              </div>
-            </div>
-
-            <!-- 2. Darshan & Office Hours Card -->
-            <div class="info-card timings-card">
-              <div class="card-header">
-                <div class="card-icon-wrap" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                </div>
-                <div>
-                  <h2 class="card-title">Darshan &amp; Office Hours</h2>
-                </div>
-              </div>
-
-              <div class="card-body">
-                <ul class="timings-list">
-                  <li class="timing-row">
-                    <div class="timing-meta">
-                      <span class="timing-name">Morning Darshan &amp; Puja</span>
-                      <span class="timing-desc">Mangal Aarti, Nitya Puja &amp; Bhog</span>
-                    </div>
-                    <span class="timing-value">05:00 AM – 12:30 PM</span>
-                  </li>
-
-                  <li class="timing-row">
-                    <div class="timing-meta">
-                      <span class="timing-name">Sanctum Mid-Day Rest</span>
-                      <span class="timing-desc">Temple sanctum closed during afternoon</span>
-                    </div>
-                    <span class="timing-value closed">12:30 PM – 04:30 PM</span>
-                  </li>
-
-                  <li class="timing-row">
-                    <div class="timing-meta">
-                      <span class="timing-name">Evening Darshan &amp; Aarti</span>
-                      <span class="timing-desc">Sandhya Aarti, Bhajan &amp; Shayan Aarti</span>
-                    </div>
-                    <span class="timing-value">04:30 PM – 09:30 PM</span>
-                  </li>
-
-                  <li class="timing-row highlight-row">
-                    <div class="timing-meta">
-                      <span class="timing-name">Administrative &amp; Trust Desk</span>
-                      <span class="timing-desc">Open 7 days a week for devotees</span>
-                    </div>
-                    <span class="timing-value">09:00 AM – 06:00 PM</span>
-                  </li>
-                </ul>
               </div>
             </div>
 
@@ -386,26 +337,11 @@ const handleReset = () => {
               </div>
             </div>
 
-            <!-- 4. Sacred Guidelines / Antim Sanskar Notice -->
-            <div class="notice-card" role="note">
-              <div class="notice-icon" aria-hidden="true">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                </svg>
-              </div>
-              <div class="notice-text">
-                <h3 class="notice-title">Antim Sanskar / Cremation Assistance</h3>
-                <p class="notice-desc">
-                  For urgent traditional Hindu cremation rites or emergency Mohashoshan guidance,
-                  please contact the on-duty priest desk directly by telephone at any hour.
-                </p>
-              </div>
-            </div>
           </div>
 
           <!-- RIGHT COLUMN: Sacred Devotee Inquiry Form -->
           <div class="form-column">
-            <div class="inquiry-form-card">
+            <div id="contact-inquiry-form" class="inquiry-form-card">
               <!-- Success State Confirmation View -->
               <div v-if="isSuccess" class="form-success-state" role="status" aria-live="polite">
                 <div class="success-icon-wrap" aria-hidden="true">
@@ -675,15 +611,16 @@ const handleReset = () => {
 
 <style scoped>
 /* --------------------------------------------------------------------------
-   CONTACT PAGE DESIGN SYSTEM (Palette A: Sindoor & Gold / Cream Ground)
-   Adheres to WCAG AA Contrast, authentic temple typography, clean card layout
+   CONTACT PAGE DESIGN SYSTEM
+   Aligned with global temple tokens, golden highlights, and dark mode harmony.
 -------------------------------------------------------------------------- */
 
 .contact-page {
   width: 100%;
-  min-height: 80vh;
-  background-color: var(--bg-primary, #F7EFE0);
-  color: var(--text-primary, #2B1A17);
+  min-height: 85vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding-top: calc(var(--nav-height, 72px)b);
   padding-bottom: 5rem;
 }
 
@@ -695,7 +632,7 @@ const handleReset = () => {
 
 /* Breadcrumb Navigation */
 .breadcrumb-nav {
-  padding: 1.25rem 0 0.5rem;
+  padding: 0.5rem 0 1rem;
 }
 
 .breadcrumb-list {
@@ -706,42 +643,43 @@ const handleReset = () => {
   padding: 0;
   margin: 0;
   font-size: 0.875rem;
-  color: var(--text-muted, rgba(43, 26, 23, 0.6));
+  color: var(--text-muted);
 }
 
 .breadcrumb-link {
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   text-decoration: none;
   font-weight: 600;
-  transition: color 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
 .breadcrumb-link:hover {
-  color: var(--gold, #E0A526);
   text-decoration: underline;
+  opacity: 0.85;
 }
 
 .breadcrumb-separator {
-  color: var(--border-color, rgba(224, 165, 38, 0.45));
+  color: var(--border-color);
+  opacity: 0.6;
 }
 
 .breadcrumb-item.active {
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
   font-weight: 500;
 }
 
 /* Hero Header */
 .contact-hero {
-  padding: 2rem 0 3rem;
+  padding: 2.5rem 1.5rem 2.5rem;
   text-align: center;
-  position: relative;
 }
 
 .hero-inner {
+  max-width: 780px;
+  margin: 0 auto;
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 820px;
 }
 
 .hero-badge {
@@ -749,14 +687,19 @@ const handleReset = () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.35rem 0.95rem;
-  background-color: rgba(110, 5, 22, 0.08);
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.45));
+  background-color: rgba(224, 165, 38, 0.08);
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 700;
   letter-spacing: 0.03em;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   margin-bottom: 1.25rem;
+}
+
+html[data-theme="dark"] .hero-badge,
+html.dark .hero-badge {
+  background-color: rgba(230, 179, 74, 0.08);
 }
 
 .badge-dot {
@@ -777,31 +720,25 @@ const handleReset = () => {
   font-family: inherit;
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   letter-spacing: 0.02em;
 }
 
 .english-title {
-  font-family: "Cinzel", Georgia, serif;
-  font-size: 2.75rem;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
   font-weight: 800;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   line-height: 1.15;
   letter-spacing: -0.01em;
 }
 
-@media (max-width: 640px) {
-  .english-title {
-    font-size: 2.15rem;
-  }
-}
-
 .hero-subtitle {
-  font-size: 1.0625rem;
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
   line-height: 1.65;
-  color: var(--text-secondary, rgba(43, 26, 23, 0.75));
-  margin: 0 0 1.75rem;
-  max-width: 680px;
+  color: var(--text-secondary);
+  margin: 0 auto 1.75rem;
+  max-width: 650px;
 }
 
 .hero-quick-status {
@@ -811,31 +748,39 @@ const handleReset = () => {
   justify-content: center;
   gap: 0.75rem;
   padding: 0.55rem 1.25rem;
-  background: var(--bg-card, #FFFFFF);
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.45));
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
   font-size: 0.8125rem;
   font-weight: 600;
-  color: var(--text-primary, #2B1A17);
-  box-shadow: 0 2px 10px rgba(110, 5, 22, 0.04);
+  color: var(--text-primary);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
 }
 
 .status-indicator {
   width: 9px;
   height: 9px;
   border-radius: 50%;
-  background-color: #16a34a;
+  background-color: var(--color-live, #16a34a);
   display: inline-block;
   margin-right: 0.35rem;
 }
 
 .status-divider {
-  color: var(--border-color, rgba(224, 165, 38, 0.45));
+  color: var(--border-color);
+}
+
+.hero-divider {
+  width: 56px;
+  height: 2px;
+  background: var(--gold, #E0A526);
+  margin: 2rem auto 0;
+  opacity: 0.75;
 }
 
 /* Two-Column Grid Layout */
 .contact-content-section {
-  padding-top: 0.5rem;
+  padding-top: 1.5rem;
 }
 
 .contact-grid {
@@ -860,11 +805,11 @@ const handleReset = () => {
 }
 
 .info-card {
-  background: var(--bg-card, #FFFFFF);
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.45));
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
   padding: 1.75rem;
-  box-shadow: 0 4px 18px rgba(110, 5, 22, 0.03);
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
   transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
@@ -874,15 +819,16 @@ const handleReset = () => {
   gap: 1rem;
   margin-bottom: 1.25rem;
   padding-bottom: 0.85rem;
-  border-bottom: 1px solid var(--border-subtle, rgba(110, 5, 22, 0.1));
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .card-icon-wrap {
   width: 44px;
   height: 44px;
   border-radius: 10px;
-  background-color: rgba(110, 5, 22, 0.06);
-  color: var(--maroon, #6E0516);
+  background-color: rgba(224, 165, 38, 0.1);
+  color: var(--gold, #E0A526);
+  border: 1px solid rgba(224, 165, 38, 0.25);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -895,10 +841,10 @@ const handleReset = () => {
 }
 
 .card-title {
-  font-family: "Cinzel", Georgia, serif;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.25rem;
   font-weight: 700;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   margin: 0;
   line-height: 1.2;
 }
@@ -906,7 +852,7 @@ const handleReset = () => {
 .card-subtitle-bn {
   display: block;
   font-size: 0.8125rem;
-  color: var(--text-muted, rgba(43, 26, 23, 0.6));
+  color: var(--text-muted);
   margin-top: 0.2rem;
 }
 
@@ -914,21 +860,22 @@ const handleReset = () => {
 .temple-formal-name {
   display: block;
   font-size: 1.05rem;
-  color: var(--maroon, #6E0516);
+  font-weight: 700;
+  color: var(--gold, #E0A526);
   margin-bottom: 0.5rem;
 }
 
 .address-text {
   font-size: 0.95rem;
   line-height: 1.6;
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
   margin: 0 0 0.5rem;
 }
 
 .landmark-text {
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--text-muted, rgba(43, 26, 23, 0.65));
+  color: var(--text-muted);
   margin: 0 0 1.25rem;
 }
 
@@ -937,19 +884,24 @@ const handleReset = () => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.65rem 1.15rem;
-  background: rgba(110, 5, 22, 0.05);
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.45));
+  background: rgba(224, 165, 38, 0.08);
+  border: 1px solid var(--gold, #E0A526);
   border-radius: 8px;
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   text-decoration: none;
   transition: all 0.2s ease;
 }
 
 .btn-directions:hover {
-  background: var(--maroon, #6E0516);
-  color: #FFFFFF;
+  background: var(--gold, #E0A526);
+  color: #161B22;
+}
+
+.btn-directions:hover svg {
+  color: #161B22;
+  fill: #161B22;
 }
 
 .action-icon {
@@ -972,7 +924,7 @@ const handleReset = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.5rem 0;
-  border-bottom: 1px dashed rgba(110, 5, 22, 0.1);
+  border-bottom: 1px dashed var(--border-subtle);
 }
 
 .timing-row:last-child {
@@ -988,26 +940,20 @@ const handleReset = () => {
 .timing-name {
   font-size: 0.9375rem;
   font-weight: 700;
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
 }
 
 .timing-desc {
   font-size: 0.775rem;
-  color: var(--text-muted, rgba(43, 26, 23, 0.6));
+  color: var(--text-muted);
 }
 
 .timing-value {
-  font-family: "Cinzel", Georgia, serif;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   white-space: nowrap;
-}
-
-.timing-value.closed {
-  color: var(--text-muted, rgba(43, 26, 23, 0.5));
-  font-style: italic;
-  font-family: inherit;
 }
 
 .highlight-row {
@@ -1029,8 +975,8 @@ const handleReset = () => {
   justify-content: space-between;
   align-items: center;
   padding: 0.75rem 0.85rem;
-  background: rgba(110, 5, 22, 0.02);
-  border: 1px solid var(--border-subtle, rgba(110, 5, 22, 0.08));
+  background: var(--bg-hover, rgba(224, 165, 38, 0.04));
+  border: 1px solid var(--border-subtle);
   border-radius: 8px;
 }
 
@@ -1044,29 +990,29 @@ const handleReset = () => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted, rgba(43, 26, 23, 0.6));
+  color: var(--text-muted);
   margin-bottom: 0.15rem;
 }
 
 .channel-link {
   font-size: 0.95rem;
   font-weight: 700;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   text-decoration: none;
-  transition: color 0.15s ease;
+  transition: opacity 0.15s ease;
 }
 
 .channel-link:hover {
-  color: var(--gold, #E0A526);
   text-decoration: underline;
+  opacity: 0.85;
 }
 
 .channel-action-btn {
   padding: 0.35rem 0.85rem;
   border-radius: 6px;
-  background: rgba(110, 5, 22, 0.07);
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.45));
-  color: var(--maroon, #6E0516);
+  background: rgba(224, 165, 38, 0.08);
+  border: 1px solid rgba(224, 165, 38, 0.4);
+  color: var(--gold, #E0A526);
   font-size: 0.8125rem;
   font-weight: 700;
   text-decoration: none;
@@ -1074,19 +1020,19 @@ const handleReset = () => {
 }
 
 .channel-action-btn:hover {
-  background: var(--maroon, #6E0516);
-  color: #FFFFFF;
+  background: var(--gold, #E0A526);
+  color: #161B22;
 }
 
 .whatsapp-btn {
-  background: rgba(37, 211, 102, 0.12);
-  border-color: rgba(37, 211, 102, 0.4);
-  color: #128C7E;
+  background: rgba(37, 211, 102, 0.12) !important;
+  border-color: rgba(37, 211, 102, 0.4) !important;
+  color: #128C7E !important;
 }
 
 .whatsapp-btn:hover {
-  background: #128C7E;
-  color: #FFFFFF;
+  background: #128C7E !important;
+  color: #FFFFFF !important;
 }
 
 /* Notice Card (Emergency / Antim Sanskar) */
@@ -1094,13 +1040,13 @@ const handleReset = () => {
   display: flex;
   gap: 1rem;
   padding: 1.25rem 1.5rem;
-  background: rgba(224, 165, 38, 0.15);
-  border: 1px solid var(--gold, #E0A526);
+  background: rgba(224, 165, 38, 0.1);
+  border: 1px solid rgba(224, 165, 38, 0.4);
   border-radius: 10px;
 }
 
 .notice-icon {
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   flex-shrink: 0;
   width: 24px;
   height: 24px;
@@ -1109,24 +1055,24 @@ const handleReset = () => {
 .notice-title {
   font-size: 0.9375rem;
   font-weight: 800;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   margin: 0 0 0.25rem;
 }
 
 .notice-desc {
   font-size: 0.85rem;
   line-height: 1.5;
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
   margin: 0;
 }
 
 /* RIGHT COLUMN: Inquiry Form Card */
 .inquiry-form-card {
-  background: var(--bg-card, #FFFFFF);
-  border: 1.5px solid var(--border-color, rgba(224, 165, 38, 0.45));
+  background: var(--bg-card);
+  border: 1.5px solid var(--border-color);
   border-radius: 14px;
   padding: 2.25rem;
-  box-shadow: 0 8px 30px rgba(110, 5, 22, 0.05);
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.05);
 }
 
 @media (max-width: 640px) {
@@ -1138,14 +1084,14 @@ const handleReset = () => {
 .form-header {
   margin-bottom: 1.75rem;
   padding-bottom: 1.25rem;
-  border-bottom: 1px solid var(--border-subtle, rgba(110, 5, 22, 0.1));
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .form-title {
-  font-family: "Cinzel", Georgia, serif;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   margin: 0 0 0.25rem;
 }
 
@@ -1160,7 +1106,7 @@ const handleReset = () => {
 .form-description {
   font-size: 0.925rem;
   line-height: 1.55;
-  color: var(--text-secondary, rgba(43, 26, 23, 0.7));
+  color: var(--text-secondary);
   margin: 0;
 }
 
@@ -1235,7 +1181,7 @@ const handleReset = () => {
 .form-label {
   font-size: 0.875rem;
   font-weight: 700;
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.25rem;
@@ -1249,7 +1195,7 @@ const handleReset = () => {
 .optional-mark {
   font-size: 0.75rem;
   font-weight: 500;
-  color: var(--text-muted, rgba(43, 26, 23, 0.5));
+  color: var(--text-muted);
 }
 
 .label-with-counter {
@@ -1260,7 +1206,7 @@ const handleReset = () => {
 
 .char-counter {
   font-size: 0.75rem;
-  color: var(--text-muted, rgba(43, 26, 23, 0.5));
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -1275,21 +1221,25 @@ const handleReset = () => {
   padding: 0.75rem 0.95rem;
   font-family: inherit;
   font-size: 0.9375rem;
-  color: var(--text-primary, #2B1A17);
-  background-color: #FAFAFA;
-  border: 1.5px solid var(--border-subtle, rgba(110, 5, 22, 0.15));
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1.5px solid var(--border-color);
   border-radius: 8px;
   outline: none;
   transition: all 0.2s ease;
   box-sizing: border-box;
 }
 
+.form-input::placeholder,
+.form-textarea::placeholder {
+  color: var(--text-muted);
+}
+
 .form-input:focus,
 .form-textarea:focus,
 .form-select:focus {
-  background-color: #FFFFFF;
-  border-color: var(--maroon, #6E0516);
-  box-shadow: 0 0 0 3px rgba(110, 5, 22, 0.12);
+  border-color: var(--gold, #E0A526);
+  box-shadow: 0 0 0 3px rgba(224, 165, 38, 0.2);
 }
 
 .form-textarea {
@@ -1315,7 +1265,7 @@ const handleReset = () => {
   transform: translateY(-50%);
   width: 18px;
   height: 18px;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   pointer-events: none;
 }
 
@@ -1332,7 +1282,7 @@ const handleReset = () => {
 
 .field-hint {
   font-size: 0.75rem;
-  color: var(--text-muted, rgba(43, 26, 23, 0.55));
+  color: var(--text-muted);
   margin: 0.2rem 0 0;
 }
 
@@ -1349,11 +1299,11 @@ const handleReset = () => {
   align-items: center;
   gap: 0.55rem;
   padding: 0.65rem 0.85rem;
-  background: rgba(110, 5, 22, 0.03);
-  border: 1px dashed var(--border-color, rgba(224, 165, 38, 0.45));
+  background: rgba(224, 165, 38, 0.06);
+  border: 1px dashed var(--border-color);
   border-radius: 6px;
   font-size: 0.775rem;
-  color: var(--text-secondary, rgba(43, 26, 23, 0.75));
+  color: var(--text-secondary);
 }
 
 .assurance-icon {
@@ -1373,7 +1323,7 @@ const handleReset = () => {
   padding: 0.95rem 1.5rem;
   background: var(--maroon, #6E0516);
   color: #FFFFFF;
-  border: 1px solid var(--border-color, rgba(224, 165, 38, 0.5));
+  border: 1px solid var(--border-color);
   border-radius: 9px;
   font-size: 1rem;
   font-weight: 800;
@@ -1463,10 +1413,10 @@ const handleReset = () => {
 }
 
 .success-title {
-  font-family: "Cinzel", Georgia, serif;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.75rem;
   font-weight: 800;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   margin: 0 0 0.25rem;
 }
 
@@ -1480,7 +1430,7 @@ const handleReset = () => {
 .success-message {
   font-size: 1rem;
   line-height: 1.55;
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
   margin: 0 0 1.25rem;
   max-width: 440px;
 }
@@ -1502,30 +1452,30 @@ const handleReset = () => {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.05em;
-  color: var(--text-muted, rgba(43, 26, 23, 0.65));
+  color: var(--text-muted);
 }
 
 .ref-value {
-  font-family: "Cinzel", Georgia, serif;
+  font-family: var(--font-serif, "Cinzel", Georgia, serif);
   font-size: 1.25rem;
   font-weight: 800;
-  color: var(--maroon, #6E0516);
+  color: var(--gold, #E0A526);
   letter-spacing: 0.05em;
 }
 
 .success-note {
   font-size: 0.875rem;
   line-height: 1.6;
-  color: var(--text-secondary, rgba(43, 26, 23, 0.7));
+  color: var(--text-secondary);
   margin: 0 0 1.75rem;
   max-width: 460px;
 }
 
 .btn-reset {
   padding: 0.75rem 1.5rem;
-  background: var(--bg-card, #FFFFFF);
-  border: 1.5px solid var(--maroon, #6E0516);
-  color: var(--maroon, #6E0516);
+  background: transparent;
+  border: 1.5px solid var(--gold, #E0A526);
+  color: var(--gold, #E0A526);
   border-radius: 8px;
   font-size: 0.9375rem;
   font-weight: 700;
@@ -1534,7 +1484,49 @@ const handleReset = () => {
 }
 
 .btn-reset:hover {
-  background: var(--maroon, #6E0516);
-  color: #FFFFFF;
+  background: var(--gold, #E0A526);
+  color: #161B22;
+}
+
+/* --------------------------------------------------------------------------
+   DARK THEME SPECIFIC POLISH (Exact match with site-wide dark architecture)
+-------------------------------------------------------------------------- */
+html[data-theme="dark"] .contact-page .form-input,
+html[data-theme="dark"] .contact-page .form-textarea,
+html[data-theme="dark"] .contact-page .form-select,
+html.dark .contact-page .form-input,
+html.dark .contact-page .form-textarea,
+html.dark .contact-page .form-select {
+  background-color: #161B22;
+  border-color: rgba(212, 175, 55, 0.25);
+  color: #F7EFE0;
+}
+
+html[data-theme="dark"] .contact-page .form-input::placeholder,
+html[data-theme="dark"] .contact-page .form-textarea::placeholder,
+html.dark .contact-page .form-input::placeholder,
+html.dark .contact-page .form-textarea::placeholder {
+  color: rgba(247, 239, 224, 0.55);
+}
+
+html[data-theme="dark"] .contact-page .form-input:focus,
+html[data-theme="dark"] .contact-page .form-textarea:focus,
+html[data-theme="dark"] .contact-page .form-select:focus,
+html.dark .contact-page .form-input:focus,
+html.dark .contact-page .form-textarea:focus,
+html.dark .contact-page .form-select:focus {
+  background-color: #1F242C;
+  border-color: var(--gold, #D4AF37);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.25);
+}
+
+html[data-theme="dark"] .contact-page .has-error .form-input,
+html[data-theme="dark"] .contact-page .has-error .form-textarea,
+html[data-theme="dark"] .contact-page .has-error .form-select,
+html.dark .contact-page .has-error .form-input,
+html.dark .contact-page .has-error .form-textarea,
+html.dark .contact-page .has-error .form-select {
+  border-color: #EF4444;
+  background-color: rgba(239, 68, 68, 0.1);
 }
 </style>

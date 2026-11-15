@@ -184,7 +184,7 @@ useHead({
       <!-- LOADING STATE -->
       <div v-if="loading" class="status-loading">
         <div class="spinner" aria-hidden="true"></div>
-        <p>Retrieving booking details from Sanctum records...</p>
+        <p>Retrieving booking details from Mandir records...</p>
       </div>
 
       <!-- ERROR STATE -->
