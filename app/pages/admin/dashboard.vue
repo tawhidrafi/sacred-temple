@@ -5271,29 +5271,33 @@ const executeDeleteEvent = async () => {
 <style scoped>
 /* ====================================================
    CLEAN MINIMALIST ADMIN DASHBOARD DESIGN SYSTEM
-   Modern, subtle borders, white/light-gray palette,
-   black primary buttons, 6px-8px border radii.
+   Aligned with Temple Light Palette (Sindoor, Gold & Cream)
+   6px-8px border radii, accessible contrast.
    ==================================================== */
-.admin-layout {
-  --adm-bg: #f8fafc;
-  --adm-surface: #ffffff;
-  --adm-border: #e2e8f0;
-  --adm-border-subtle: #f1f5f9;
-  --adm-text-main: #0f172a;
-  --adm-text-muted: #64748b;
-  --adm-text-light: #94a3b8;
-  --adm-black: #0f172a;
-  --adm-black-hover: #1e293b;
+.admin-layout,
+:global(html.dark) .admin-layout,
+:global(html[data-theme="dark"]) .admin-layout {
+  --adm-bg: #F7EFE0;
+  --adm-surface: #FFFFFF;
+  --adm-border: rgba(224, 165, 38, 0.4);
+  --adm-border-subtle: #F2DFB4;
+  --adm-text-main: #2B1A17;
+  --adm-text-muted: rgba(43, 26, 23, 0.72);
+  --adm-text-light: rgba(43, 26, 23, 0.52);
+  --adm-black: #6E0516;
+  --adm-black-hover: #3F0A12;
+  --adm-gold: #E0A526;
   --adm-radius-sm: 6px;
   --adm-radius: 8px;
   --adm-radius-lg: 10px;
 
   display: flex;
   min-height: 100vh;
-  background-color: var(--adm-bg);
-  color: var(--adm-text-main);
+  background-color: var(--adm-bg) !important;
+  color: var(--adm-text-main) !important;
+  color-scheme: light !important;
   position: relative;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans, "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif);
   -webkit-font-smoothing: antialiased;
 }
 
@@ -5732,12 +5736,13 @@ const executeDeleteEvent = async () => {
 
 .topbar-notifications-btn:hover {
   background: var(--adm-bg);
-  border-color: #cbd5e1;
+  border-color: var(--adm-gold, #E0A526);
+  color: var(--adm-black, #6E0516);
 }
 
 .topbar-icon-btn:hover {
-  border-color: #cbd5e1;
-  color: var(--adm-text-main);
+  border-color: var(--adm-gold, #E0A526);
+  color: var(--adm-black, #6E0516);
   background: var(--adm-bg);
 }
 
@@ -5778,7 +5783,8 @@ const executeDeleteEvent = async () => {
 
 .btn-live-site:hover {
   background: var(--adm-bg);
-  border-color: #cbd5e1;
+  border-color: var(--adm-gold, #E0A526);
+  color: var(--adm-black, #6E0516);
 }
 
 .link-arrow {
@@ -5794,6 +5800,18 @@ const executeDeleteEvent = async () => {
   padding: 2rem 2.25rem 4rem;
   max-width: 1360px;
   width: 100%;
+}
+
+@media (max-width: 640px) {
+  .admin-topbar {
+    padding: 0 1rem;
+  }
+  .crumb-root {
+    max-width: 100px;
+  }
+  .dashboard-body {
+    padding: 1.25rem 1rem 3rem;
+  }
 }
 
 .welcome-banner {
@@ -5843,8 +5861,8 @@ const executeDeleteEvent = async () => {
 }
 
 .kpi-card:hover {
-  border-color: #cbd5e1;
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+  border-color: var(--adm-gold, #E0A526);
+  box-shadow: 0 4px 12px rgba(224, 165, 38, 0.15);
 }
 
 .kpi-icon-wrap {

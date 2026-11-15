@@ -420,8 +420,8 @@ const scrollToNext = () => {
   margin-top: calc(-1 * var(--nav-height, 72px));
   padding-top: calc(var(--nav-height, 72px) + 2rem);
   padding-bottom: 3.5rem;
-  padding-left: 1.5rem;
-  padding-right: 1.5rem;
+  padding-left: clamp(1.5rem, 5vw, 4rem);
+  padding-right: clamp(1.5rem, 5vw, 4rem);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -436,8 +436,8 @@ const scrollToNext = () => {
     min-height: 100dvh;
     padding-top: calc(var(--nav-height, 64px) + 2rem);
     padding-bottom: 4.5rem;
-    padding-left: 1.25rem;
-    padding-right: 1.25rem;
+    padding-left: clamp(1.25rem, 4vw, 2.5rem);
+    padding-right: clamp(1.25rem, 4vw, 2.5rem);
   }
 }
 
@@ -445,8 +445,8 @@ const scrollToNext = () => {
   .hero-section {
     padding-top: calc(var(--nav-height, 64px) + 1.5rem);
     padding-bottom: 4rem;
-    padding-left: 1rem;
-    padding-right: 1rem;
+    padding-left: 1.25rem;
+    padding-right: 1.25rem;
   }
 }
 
@@ -1011,7 +1011,7 @@ const scrollToNext = () => {
 }
 
 .btn-secondary {
-  background: var(--action-btn-bg);
+  background: var(--bg-card);
   color: var(--text-primary);
   border: 1.5px solid var(--border-color);
   backdrop-filter: blur(8px);
@@ -1019,10 +1019,14 @@ const scrollToNext = () => {
 }
 
 .btn-secondary:hover {
-  background: var(--action-btn-hover);
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--color-on-brand, #F7EFE0);
+  color: var(--btn-primary-text);
   transform: translateY(-2px);
+}
+
+.btn-secondary:hover .btn-icon-right {
+  color: var(--btn-primary-text);
 }
 
 .btn-icon-right {

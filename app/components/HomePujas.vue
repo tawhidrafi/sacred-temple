@@ -157,7 +157,7 @@ const { pujaOfferings } = useTempleData();
 ---------------------------------------------------- */
 .puja-section {
   width: 100%;
-  padding: 6.5rem 1.5rem;
+  padding: 6.5rem clamp(1.5rem, 5vw, 4rem);
   background-color: var(--bg-primary);
   position: relative;
 }
@@ -351,15 +351,15 @@ const { pujaOfferings } = useTempleData();
 }
 
 .btn-secondary {
-  background: var(--action-btn-bg);
+  background: var(--bg-card);
   color: var(--text-primary);
   border: 1px solid var(--border-color);
 }
 
 .btn-secondary:hover {
-  background: var(--action-btn-hover);
+  background: var(--accent);
   border-color: var(--accent);
-  color: var(--color-on-brand, #F7EFE0);
+  color: var(--btn-primary-text);
   transform: translateY(-2px);
 }
 

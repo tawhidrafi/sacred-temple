@@ -192,7 +192,7 @@ const { upcomingFestivals, templeNotices } = useTempleData();
 ---------------------------------------------------- */
 .community-section {
   width: 100%;
-  padding: 6.5rem 1.5rem;
+  padding: 6.5rem clamp(1.5rem, 5vw, 4rem);
   background-color: var(--bg-primary);
   position: relative;
 }

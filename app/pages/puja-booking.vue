@@ -686,7 +686,8 @@ html.dark .hero-badge {
 }
 
 .btn-contact-desk:hover {
-  background-color: var(--nav-hover-bg);
+  background-color: var(--accent);
   border-color: var(--accent);
+  color: var(--btn-primary-text);
 }
 </style>

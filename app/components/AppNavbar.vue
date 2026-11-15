@@ -657,7 +657,7 @@ onBeforeUnmount(() => {
 
 .nav-item:hover {
   color: var(--accent);
-  background-color: var(--nav-hover-bg) !important;
+  background-color: transparent !important;
   opacity: 1;
 }
 
@@ -686,7 +686,7 @@ onBeforeUnmount(() => {
 .site-header.scrolled-header .nav-item:hover,
 .site-header.mobile-menu-active .nav-item:hover {
   color: var(--nav-hover-text, var(--gold));
-  background-color: var(--nav-hover-bg) !important;
+  background-color: transparent !important;
 }
 
 .site-header.scrolled-header .nav-item::after,
@@ -740,9 +740,9 @@ onBeforeUnmount(() => {
 
 .action-btn:hover,
 .action-btn.btn-active {
-  color: var(--accent);
-  background-color: var(--action-btn-hover);
-  border-color: var(--accent);
+  color: var(--gold, #E0A526);
+  background-color: rgba(224, 165, 38, 0.15);
+  border-color: var(--gold, #E0A526);
   box-shadow: 0 0 12px var(--accent-glow);
   transform: translateY(-1px);
 }
@@ -761,11 +761,12 @@ onBeforeUnmount(() => {
 .site-header.mobile-menu-active .action-btn:hover {
   color: var(--gold, #E0A526);
   border-color: var(--gold, #E0A526);
+  background-color: rgba(247, 239, 224, 0.15);
 }
 
 .site-header.scrolled-header .lang-code,
 .site-header.mobile-menu-active .lang-code {
-  color: var(--nav-text, #F7EFE0);
+  color: currentColor;
 }
 
 .btn-icon {
@@ -788,7 +789,7 @@ onBeforeUnmount(() => {
   font-size: 0.775rem;
   font-weight: 700;
   letter-spacing: 0.04em;
-  color: var(--text-primary);
+  color: currentColor;
 }
 
 @media (max-width: 768px) {

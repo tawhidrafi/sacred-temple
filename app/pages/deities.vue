@@ -545,9 +545,9 @@ html.dark .deity-card:hover {
 }
 
 .btn-darshan-link:hover {
-  background-color: var(--nav-hover-bg);
+  background-color: var(--accent);
   border-color: var(--accent);
-  color: var(--accent-text);
+  color: var(--btn-primary-text);
 }
 
 .btn-puja-link {
@@ -666,8 +666,9 @@ html.dark .deity-card:hover {
 }
 
 .btn-secondary-action:hover {
-  background-color: var(--nav-hover-bg);
+  background-color: var(--accent);
   border-color: var(--accent);
+  color: var(--btn-primary-text);
 }
 
 /* ====================================================

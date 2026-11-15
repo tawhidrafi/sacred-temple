@@ -450,7 +450,7 @@ function retryFetch() {
 ------------------------------------------------------------------------- */
 .aarti-calendar-section {
   width: 100%;
-  padding: 5rem 1.5rem;
+  padding: 5rem clamp(1.5rem, 5vw, 4rem);
   background-color: var(--bg-primary);
   position: relative;
 }
@@ -1045,7 +1045,7 @@ function retryFetch() {
   border-radius: 9999px;
   font-size: 0.775rem;
   font-weight: 700;
-  color: var(--color-on-brand, #F7EFE0);
+  color: #F7EFE0;
 }
 
 .mini-clock {
