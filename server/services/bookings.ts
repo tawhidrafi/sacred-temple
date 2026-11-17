@@ -147,6 +147,55 @@ export class BookingsService {
     }
   }
 
+  /**
+   * Look up booking(s) by reference token (e.g. KM-2026-ABCDE) or mobile phone number.
+   * If a phone number is provided, returns the latest booking and all associated records.
+   */
+  static async getByRefOrPhone(db: DrizzleD1Database<typeof schema>, query: string) {
+    const clean = query.trim();
+    if (!clean) return { booking: null, items: [] };
+
+    // 1. Try exact reference match first
+    const byRef = await this.getByRef(db, clean);
+    if (byRef) {
+      return { booking: byRef, items: [byRef] };
+    }
+
+    // 2. If it contains digits (like a mobile phone number)
+    const digitsOnly = clean.replace(/[^0-9]/g, "");
+    if (digitsOnly.length >= 6) {
+      const phoneTail = digitsOnly.length > 8 ? digitsOnly.slice(-8) : digitsOnly;
+
+      const rows = await db
+        .select({
+          ref: pujaBookings.ref,
+        })
+        .from(pujaBookings)
+        .where(
+          or(
+            eq(pujaBookings.phone, clean),
+            eq(pujaBookings.phone, digitsOnly),
+            like(pujaBookings.phone, `%${phoneTail}%`)
+          )
+        )
+        .orderBy(desc(pujaBookings.createdAt));
+
+      if (rows.length > 0) {
+        const fullItems = [];
+        for (const r of rows) {
+          const item = await this.getByRef(db, r.ref);
+          if (item) fullItems.push(item);
+        }
+        return {
+          booking: fullItems[0] || null,
+          items: fullItems,
+        };
+      }
+    }
+
+    return { booking: null, items: [] };
+  }
+
   private static async executeGetByRef(db: DrizzleD1Database<typeof schema>, ref: string) {
     const rows = await db
       .select({

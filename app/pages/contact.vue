@@ -29,6 +29,21 @@ const subjectCategories = [
   { label: "Other / Custom Topic", value: "custom" },
 ];
 
+// Dynamic Site Settings from backend (with canonical fallbacks)
+const { data: siteSettings } = await useFetch<any>("/api/cms/site-settings", {
+  key: "contact_page_site_settings",
+  server: true,
+});
+
+const templeFormalName = computed(() => siteSettings.value?.brand?.siteTitle || "Sri Sri Golpahar Mohashoshan Kali Mandir");
+const contactAddress = computed(() => siteSettings.value?.contact?.address || "Golpahar Moor, O.R. Nizam Road / Mehedibag Road,\nChittagong-4000, Bangladesh.");
+const googleMapsUrl = computed(() => siteSettings.value?.contact?.googleMapsUrl || "https://www.google.com/maps/search/?api=1&query=Golpahar+Mohashoshan+Kali+Mandir+Chittagong");
+const contactPhone = computed(() => siteSettings.value?.contact?.phone || "+880 2-41356335");
+const contactPhoneClean = computed(() => contactPhone.value.replace(/[^0-9+]/g, ""));
+const contactWhatsapp = computed(() => siteSettings.value?.social?.whatsappNumber || "+880 1819-123456");
+const contactWhatsappClean = computed(() => contactWhatsapp.value.replace(/[^0-9]/g, ""));
+const contactEmail = computed(() => siteSettings.value?.contact?.email || "office@golpaharkalimandir.org");
+
 const defaultCategory = subjectCategories[0]?.value ?? "Daily Darshan & Temple Visit";
 const selectedCategory = ref(defaultCategory);
 const isCustomSubject = computed(() => selectedCategory.value === "custom");
@@ -164,17 +179,6 @@ const handleReset = () => {
 <template>
   <div class="contact-page">
     <!-- Breadcrumb Bar -->
-    <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-      <div class="contact-container">
-        <ol class="breadcrumb-list">
-          <li class="breadcrumb-item">
-            <NuxtLink to="/" class="breadcrumb-link">Home</NuxtLink>
-          </li>
-          <li class="breadcrumb-separator" aria-hidden="true">/</li>
-          <li class="breadcrumb-item active" aria-current="page">Contact Us</li>
-        </ol>
-      </div>
-    </nav>
 
     <!-- Hero Header -->
     <header class="contact-hero">
@@ -234,10 +238,9 @@ const handleReset = () => {
 
               <div class="card-body">
                 <div class="address-box">
-                  <strong class="temple-formal-name">Sri Sri Golpahar Mohashoshan Kali Mandir</strong>
-                  <p class="address-text">
-                    Golpahar Moor, O.R. Nizam Road / Mehedibag Road,<br />
-                    Chittagong-4000, Bangladesh.
+                  <strong class="temple-formal-name">{{ templeFormalName }}</strong>
+                  <p class="address-text" style="white-space: pre-line;">
+                    {{ contactAddress }}
                   </p>
                   <p class="landmark-text">
                     <em>Landmark:</em> Situated opposite Chittagong Medical College East Gate area, near Prabartak Circle.
@@ -246,7 +249,7 @@ const handleReset = () => {
 
                 <div class="directions-actions">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Golpahar+Mohashoshan+Kali+Mandir+Chittagong"
+                    :href="googleMapsUrl"
                     target="_blank"
                     rel="noopener noreferrer"
                     class="btn-directions"
@@ -286,9 +289,9 @@ const handleReset = () => {
                   <div class="channel-item">
                     <div class="channel-info">
                       <span class="channel-label">Temple Devotee Desk</span>
-                      <a href="tel:+880241356335" class="channel-link">+880 2-41356335</a>
+                      <a :href="`tel:${contactPhoneClean}`" class="channel-link">{{ contactPhone }}</a>
                     </div>
-                    <a href="tel:+880241356335" class="channel-action-btn" title="Call devotee desk">
+                    <a :href="`tel:${contactPhoneClean}`" class="channel-action-btn" title="Call devotee desk">
                       Call
                     </a>
                   </div>
@@ -298,16 +301,16 @@ const handleReset = () => {
                     <div class="channel-info">
                       <span class="channel-label">Devotee WhatsApp Assistance</span>
                       <a
-                        href="https://wa.me/8801819123456"
+                        :href="`https://wa.me/${contactWhatsappClean}`"
                         target="_blank"
                         rel="noopener noreferrer"
                         class="channel-link"
                       >
-                        +880 1819-123456
+                        {{ contactWhatsapp }}
                       </a>
                     </div>
                     <a
-                      href="https://wa.me/8801819123456"
+                      :href="`https://wa.me/${contactWhatsappClean}`"
                       target="_blank"
                       rel="noopener noreferrer"
                       class="channel-action-btn whatsapp-btn"
@@ -321,12 +324,12 @@ const handleReset = () => {
                   <div class="channel-item">
                     <div class="channel-info">
                       <span class="channel-label">Official Inquiries &amp; Trust Email</span>
-                      <a href="mailto:office@golpaharkalimandir.org" class="channel-link">
-                        office@golpaharkalimandir.org
+                      <a :href="`mailto:${contactEmail}`" class="channel-link">
+                        {{ contactEmail }}
                       </a>
                     </div>
                     <a
-                      href="mailto:office@golpaharkalimandir.org"
+                      :href="`mailto:${contactEmail}`"
                       class="channel-action-btn"
                       title="Send email"
                     >

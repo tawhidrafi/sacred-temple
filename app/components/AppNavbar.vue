@@ -229,6 +229,10 @@ onBeforeUnmount(() => {
           Puja &amp; Rituals
         </NuxtLink>
 
+        <NuxtLink to="/booking-status" class="nav-item" active-class="nav-item-active">
+          Track Booking
+        </NuxtLink>
+
         <NuxtLink to="/festivals-and-events" class="nav-item" active-class="nav-item-active">
           Festivals
         </NuxtLink>
@@ -448,6 +452,15 @@ onBeforeUnmount(() => {
               @click="isMobileMenuOpen = false"
             >
               Puja &amp; Rituals
+            </NuxtLink>
+
+            <NuxtLink
+              to="/booking-status"
+              class="mobile-nav-item"
+              active-class="mobile-nav-active"
+              @click="isMobileMenuOpen = false"
+            >
+              Track Booking
             </NuxtLink>
 
             <NuxtLink

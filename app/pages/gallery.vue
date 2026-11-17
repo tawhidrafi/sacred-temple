@@ -21,7 +21,6 @@ useHead({
 interface GalleryItem {
   id: number;
   title: string;
-  subtitleBn: string;
   category: "deities" | "sanctums" | "festivals" | "heritage";
   categoryLabel: string;
   image: string;
@@ -33,7 +32,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 1,
     title: "Maa Bhavatarini Kali Sanctum",
-    subtitleBn: "শ্রী শ্রী মা ভবতারিণী কালী প্রতিমা",
     category: "deities",
     categoryLabel: "Presiding Deities",
     image: "/images/optimized/kali.jpg",
@@ -44,7 +42,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 2,
     title: "Lord Mahadeva Shiva Altar",
-    subtitleBn: "মহাদেব শিবের পূত বিগ্রহ ও লিঙ্গম",
     category: "deities",
     categoryLabel: "Presiding Deities",
     image: "/images/optimized/shiva.jpg",
@@ -55,7 +52,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 3,
     title: "Sri Sri Radha Krishna Shrine",
-    subtitleBn: "শ্রী শ্রী রাধাকৃষ্ণ যুগল রূপ",
     category: "deities",
     categoryLabel: "Presiding Deities",
     image: "/images/optimized/krishna.jpg",
@@ -66,7 +62,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 4,
     title: "Lord Vighnaharta Ganesha",
-    subtitleBn: "শ্রী শ্রী সিদ্ধিদাতা গণেশ বিগ্রহ",
     category: "deities",
     categoryLabel: "Presiding Deities",
     image: "/images/optimized/ganesha.jpg",
@@ -77,7 +72,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 5,
     title: "Maa Mahalakshmi Sanctum",
-    subtitleBn: "মা মহালক্ষ্মী দেবী দর্শন",
     category: "deities",
     categoryLabel: "Presiding Deities",
     image: "/images/optimized/lakshmi.jpg",
@@ -88,7 +82,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 6,
     title: "Evening Maha Deepam Aarti",
-    subtitleBn: "সন্ধ্যা মহাদীপারতি ও শঙ্খনাদ",
     category: "festivals",
     categoryLabel: "Festivals & Aarti",
     image: "/images/deities/kali.jpg",
@@ -99,7 +92,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 7,
     title: "Holy Mahashoshan Peeth Altar",
-    subtitleBn: "ঐতিহাসিক মহাশ্মশান কালীপীঠ",
     category: "heritage",
     categoryLabel: "Heritage & Shoshan",
     image: "/images/deities/shiva.jpg",
@@ -110,7 +102,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 8,
     title: "Kartika Purnima & Annakut Utsav",
-    subtitleBn: "কার্তিক পূর্ণিমা ও অন্নকূট মহোৎসব",
     category: "festivals",
     categoryLabel: "Festivals & Aarti",
     image: "/images/deities/krishna.jpg",
@@ -121,7 +112,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 9,
     title: "Inner Sanctum Garbhagriha Entrance",
-    subtitleBn: "গর্ভগৃহ প্রবেশদ্বার ও মঙ্গল কলস",
     category: "sanctums",
     categoryLabel: "Sanctums & Shrines",
     image: "/images/deities/ganesha.jpg",
@@ -132,7 +122,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 10,
     title: "Morning Mangala Aarti Rites",
-    subtitleBn: "প্রাতঃ মঙ্গলারতি ও পুষ্পাঞ্জলি",
     category: "festivals",
     categoryLabel: "Festivals & Aarti",
     image: "/images/deities/lakshmi.jpg",
@@ -143,7 +132,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 11,
     title: "Historic Banyan Tree Shivalaya",
-    subtitleBn: "বটবৃক্ষতল শিবালয় ও ধুনী স্থান",
     category: "heritage",
     categoryLabel: "Heritage & Shoshan",
     image: "/images/optimized/shiva.jpg",
@@ -154,7 +142,6 @@ const galleryItems: GalleryItem[] = [
   {
     id: 12,
     title: "Sanctum Brass Deepam Illumination",
-    subtitleBn: "গর্ভগৃহের মঙ্গল প্রদীপ জ্যোতি",
     category: "sanctums",
     categoryLabel: "Sanctums & Shrines",
     image: "/images/optimized/kali.jpg",
@@ -253,16 +240,6 @@ onUnmounted(() => {
 <template>
   <div class="gallery-page">
     <div class="gallery-container">
-      <!-- Breadcrumb Navigation -->
-      <nav class="breadcrumb-nav" aria-label="Breadcrumb">
-        <ol class="breadcrumb-list">
-          <li class="breadcrumb-item">
-            <NuxtLink to="/" class="breadcrumb-link">Home</NuxtLink>
-          </li>
-          <li class="breadcrumb-separator" aria-hidden="true">/</li>
-          <li class="breadcrumb-item active" aria-current="page">Gallery</li>
-        </ol>
-      </nav>
 
       <!-- Hero Header -->
       <header class="gallery-hero">
@@ -273,7 +250,6 @@ onUnmounted(() => {
           </div>
 
           <h1 class="hero-title">
-            <span class="bengali-title">শ্রী শ্রী গোলপাহাড় মহাশ্মশান কালী মন্দির দর্শন</span>
             <span class="english-title">Sacred Darshan &amp; Temple Gallery</span>
           </h1>
 
@@ -345,7 +321,6 @@ onUnmounted(() => {
             <!-- Card Content Body -->
             <div class="card-body">
               <div class="card-meta-row">
-                <span class="item-subtitle-bn">{{ item.subtitleBn }}</span>
                 <span class="item-tithi">{{ item.dateOrTithi }}</span>
               </div>
 
@@ -364,34 +339,6 @@ onUnmounted(() => {
               </div>
             </div>
           </article>
-        </div>
-      </section>
-
-      <!-- Bottom Seva & Visitation Card -->
-      <section class="visitation-banner">
-        <div class="visitation-card">
-          <div class="visitation-text">
-            <span class="visitation-kicker">PILGRIM DARSHAN DESK</span>
-            <h2 class="visitation-title">Plan Your Visit to Golpahar Kali Mandir</h2>
-            <p class="visitation-desc">
-              Experience the divine presence in person. The temple doors open daily for morning darshan from 05:00 AM – 12:30 PM and evening aarti from 04:30 PM – 09:30 PM. Pilgrims can register sankalpa puja or offer voluntary annadanam.
-            </p>
-          </div>
-          <div class="visitation-actions">
-            <NuxtLink to="/contact" class="btn btn-primary-action">
-              <span>Contact Seva Desk</span>
-              <svg viewBox="0 0 20 20" fill="currentColor" class="action-btn-icon">
-                <path
-                  fill-rule="evenodd"
-                  d="M10.293 3.293a1 1 0 011.414 0l6 6a1 1 0 010 1.414l-6 6a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-4.293-4.293a1 1 0 010-1.414z"
-                  clip-rule="evenodd"
-                />
-              </svg>
-            </NuxtLink>
-            <NuxtLink to="/puja-and-rituals" class="btn btn-secondary-action">
-              <span>Puja &amp; Daily Schedule</span>
-            </NuxtLink>
-          </div>
         </div>
       </section>
     </div>
@@ -453,7 +400,6 @@ onUnmounted(() => {
                     </span>
                   </div>
                   <h3 class="caption-title">{{ activeLightboxItem.title }}</h3>
-                  <p class="caption-subtitle-bn">{{ activeLightboxItem.subtitleBn }}</p>
                   <p class="caption-desc">{{ activeLightboxItem.caption }}</p>
                 </div>
               </div>

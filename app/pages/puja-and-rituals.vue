@@ -131,14 +131,6 @@ useHead({
     <main class="page-container">
       <!-- 2. PUJA OFFERINGS & CHARGES SECTION -->
       <section class="pujas-section" aria-label="Puja Offerings and Seva Charges">
-        <div class="section-header">
-          <span class="section-kicker">Devotee Offerings</span>
-          <h2 class="section-title">Puja Services &amp; Sankalpa Charges</h2>
-          <p class="section-sub">
-            Devotees may sponsor individual pujas with family name and gotra pronounced in the sacred Vedic sankalpa.
-          </p>
-        </div>
-
         <div v-if="pujasStatus === 'pending' && displayedPujas.length === 0" class="loading-state">
           <div class="spinner" aria-hidden="true"></div>
           <p>Loading consecrated puja offerings...</p>

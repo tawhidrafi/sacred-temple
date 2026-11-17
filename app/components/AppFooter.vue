@@ -7,6 +7,7 @@ const menuLinks = [
   { name: "About", path: "/about" },
   { name: "Deities", path: "/deities" },
   { name: "Puja & Rituals", path: "/puja-and-rituals" },
+  { name: "Track Booking", path: "/booking-status" },
   { name: "Puja List & Charges", path: "/puja-list-and-charges" },
   { name: "Festivals", path: "/festivals-and-events" },
   { name: "Gallery", path: "/gallery" },

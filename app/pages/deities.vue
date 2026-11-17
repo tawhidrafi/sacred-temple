@@ -74,21 +74,38 @@ const { data: serverResponse, status } = await useFetch<{ items: any[] }>(
   }
 );
 
+// Resolve static deity photo by slug/name or explicit valid image path
+const resolveStaticDeityImage = (slug?: string, name?: string, explicitImage?: string | null): string => {
+  if (explicitImage && explicitImage.trim() && !explicitImage.startsWith("r2://")) {
+    return explicitImage;
+  }
+  const token = `${slug || ""} ${name || ""}`.toLowerCase();
+  if (token.includes("shiva") || token.includes("mahadev")) return "/images/deities/shiva.jpg";
+  if (token.includes("kali") || token.includes("bhavatarini")) return "/images/deities/kali.jpg";
+  if (token.includes("ganesh") || token.includes("vighnaharta")) return "/images/deities/ganesha.jpg";
+  if (token.includes("krishna") || token.includes("radha")) return "/images/deities/krishna.jpg";
+  if (token.includes("lakshmi")) return "/images/deities/lakshmi.jpg";
+  return "/images/deities/kali.jpg";
+};
+
 // Map and normalize server data with fallback
 const displayedDeities = computed<DeityDisplayItem[]>(() => {
   const items = serverResponse.value?.items;
   if (Array.isArray(items) && items.length > 0) {
     return items
       .filter((item) => item.active !== false)
-      .map((item) => ({
-        id: item.id || item.slug,
-        slug: item.slug || "",
-        name: typeof item.name === "object" ? item.name?.en || item.name?.bn || "Sacred Deity" : item.name || "Sacred Deity",
-        subtitle: typeof item.subtitle === "object" ? item.subtitle?.en || item.subtitle?.bn || "" : item.subtitle || "",
-        description: typeof item.description === "object" ? item.description?.en || item.description?.bn || "" : item.description || "",
-        image: item.imageId || item.image || "/images/deities/kali.jpg",
-        sortOrder: item.sortOrder ?? 0,
-      }))
+      .map((item) => {
+        const deityName = typeof item.name === "object" ? item.name?.en || item.name?.bn || "Sacred Deity" : item.name || "Sacred Deity";
+        return {
+          id: item.id || item.slug,
+          slug: item.slug || "",
+          name: deityName,
+          subtitle: typeof item.subtitle === "object" ? item.subtitle?.en || item.subtitle?.bn || "" : item.subtitle || "",
+          description: typeof item.description === "object" ? item.description?.en || item.description?.bn || "" : item.description || "",
+          image: resolveStaticDeityImage(item.slug, deityName, item.imageId || item.image),
+          sortOrder: item.sortOrder ?? 0,
+        };
+      })
       .sort((a, b) => a.sortOrder - b.sortOrder);
   }
   return defaultDeities;
@@ -212,27 +229,6 @@ useHead({
             </div>
           </div>
         </article>
-      </section>
-
-      <!-- 3. PEACEFUL DARSHAN & VISITATION CARD -->
-      <section class="darshan-info-card" aria-label="Daily Darshan Information">
-        <div class="info-content">
-          <span class="info-kicker">Sanctum Darshan &amp; Rituals</span>
-          <h2 class="info-title">Daily Darshan for Devotees &amp; Pilgrims</h2>
-          <p class="info-text">
-            The temple sanctum opens daily for morning prayers, noon bhog, and evening sandhya aarti.
-            Devotees and visitors from all backgrounds are welcome to offer silent prayers, receive consecrated prasad,
-            and participate in peace and devotion.
-          </p>
-        </div>
-        <div class="info-actions">
-          <NuxtLink to="/puja-list-and-charges" class="btn-primary-action">
-            Puja Services &amp; Charges
-          </NuxtLink>
-          <NuxtLink to="/contact" class="btn-secondary-action">
-            Plan A Visit
-          </NuxtLink>
-        </div>
       </section>
     </main>
 

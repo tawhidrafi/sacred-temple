@@ -14,40 +14,48 @@ interface BookingStatusData {
   pujaName?: { en: string; bn: string } | string;
   pujaPrice?: number | null;
   pujaDuration?: string | null;
+  items?: BookingStatusData[];
 }
 
 const route = useRoute();
 const router = useRouter();
 
-// Reference code from query or manual input
+// Reference code or phone number from query or manual input
 const searchRef = ref("");
 const activeRef = ref("");
 
 // State
 const loading = ref(false);
 const booking = ref<BookingStatusData | null>(null);
+const multipleBookings = ref<BookingStatusData[]>([]);
 const lookupError = ref("");
 const copied = ref(false);
 
 // Whether this is freshly forwarded from submission
 const isNewSubmission = computed(() => route.query.new === "1");
 
-// Fetch booking details by reference code
-const fetchBookingStatus = async (refCode: string) => {
-  const clean = refCode.trim().toUpperCase();
+// Fetch booking details by reference code or phone number
+const fetchBookingStatus = async (queryStr: string) => {
+  const clean = queryStr.trim();
   if (!clean) return;
 
   activeRef.value = clean;
   loading.value = true;
   lookupError.value = "";
   booking.value = null;
+  multipleBookings.value = [];
 
   try {
-    const res = await $fetch<BookingStatusData>(`/api/public/bookings/${encodeURIComponent(clean)}`);
+    const res = await $fetch<BookingStatusData & { items?: BookingStatusData[] }>(
+      `/api/public/bookings/${encodeURIComponent(clean)}`
+    );
     if (res && res.ref) {
       booking.value = res;
+      if (Array.isArray(res.items) && res.items.length > 1) {
+        multipleBookings.value = res.items;
+      }
     } else {
-      lookupError.value = `No booking request found with reference code "${clean}".`;
+      lookupError.value = `No booking request found for "${clean}".`;
     }
   } catch (err: any) {
     lookupError.value = err?.data?.message || err?.message || `No booking found for "${clean}".`;
@@ -56,9 +64,13 @@ const fetchBookingStatus = async (refCode: string) => {
   }
 };
 
+const selectBooking = (item: BookingStatusData) => {
+  booking.value = item;
+};
+
 const handleManualLookup = () => {
   if (!searchRef.value.trim()) return;
-  router.push({ query: { ref: searchRef.value.trim().toUpperCase() } });
+  router.push({ query: { ref: searchRef.value.trim() } });
   fetchBookingStatus(searchRef.value.trim());
 };
 
@@ -76,7 +88,7 @@ const copyReference = () => {
 onMounted(() => {
   const initialRef = (route.query.ref as string) || "";
   if (initialRef) {
-    searchRef.value = initialRef.toUpperCase();
+    searchRef.value = initialRef;
     fetchBookingStatus(initialRef);
   }
 });
@@ -84,9 +96,9 @@ onMounted(() => {
 watch(
   () => route.query.ref,
   (newRef) => {
-    if (newRef && typeof newRef === "string" && newRef.toUpperCase() !== activeRef.value) {
-      searchRef.value = newRef.toUpperCase();
-      fetchBookingStatus(newRef);
+    if (newRef && typeof newRef === "string" && newRef.trim() !== activeRef.value) {
+      searchRef.value = newRef.trim();
+      fetchBookingStatus(newRef.trim());
     }
   }
 );
@@ -159,10 +171,10 @@ useHead({
       </div>
 
       <!-- LOOKUP SEARCH CARD (IF NO REF OR CHECKING ANOTHER) -->
-      <section class="lookup-card" aria-label="Reference Lookup">
+      <section class="lookup-card" aria-label="Reference or Phone Lookup">
         <form @submit.prevent="handleManualLookup" class="lookup-form">
           <label class="lookup-label" for="ref-input">
-            Enter Booking Reference Code
+            Enter Booking Reference Code or Mobile Phone Number
           </label>
           <div class="lookup-input-wrap">
             <input
@@ -170,7 +182,7 @@ useHead({
               v-model="searchRef"
               type="text"
               class="lookup-input"
-              placeholder="e.g. KM-2026-ABCDE"
+              placeholder="e.g. KM-2026-ABCDE or 01819123456"
               autocomplete="off"
               required
             />
@@ -178,7 +190,33 @@ useHead({
               <span>{{ loading ? 'Checking...' : 'Check Status' }}</span>
             </button>
           </div>
+          <p class="lookup-hint">
+            You can track your puja using the unique reference code or the mobile number entered during booking.
+          </p>
         </form>
+      </section>
+
+      <!-- MULTIPLE BOOKINGS SELECTOR (IF SEARCHED BY PHONE) -->
+      <section v-if="multipleBookings.length > 1" class="multiple-bookings-card" aria-label="Multiple Bookings Found">
+        <div class="multiple-header">
+          <span class="multiple-badge">{{ multipleBookings.length }} Offerings Found</span>
+          <p class="multiple-sub">Multiple puja bookings found for this search. Select an offering below to view full details:</p>
+        </div>
+        <div class="multiple-pills-list">
+          <button
+            v-for="item in multipleBookings"
+            :key="item.ref"
+            type="button"
+            class="multiple-pill-btn"
+            :class="{ 'pill-selected': booking?.ref === item.ref }"
+            @click="selectBooking(item)"
+          >
+            <span class="pill-ref">{{ item.ref }}</span>
+            <span class="pill-name">{{ formatPujaTitle(item.pujaName) }}</span>
+            <span class="pill-date">{{ formatDate(item.preferredDate) }}</span>
+            <span class="pill-tag" :class="`status-${item.status}`">{{ formatStatusLabel(item.status) }}</span>
+          </button>
+        </div>
       </section>
 
       <!-- LOADING STATE -->
@@ -189,7 +227,7 @@ useHead({
 
       <!-- ERROR STATE -->
       <div v-else-if="lookupError" class="lookup-error-card" role="alert">
-        <h3 class="error-heading">Reference Not Found</h3>
+        <h3 class="error-heading">Booking Not Found</h3>
         <p class="error-text">{{ lookupError }}</p>
         <div class="error-actions">
           <NuxtLink to="/puja-booking" class="btn-primary-action">
@@ -282,18 +320,6 @@ useHead({
             Need Help?
           </NuxtLink>
         </div>
-      </section>
-
-      <!-- EMPTY STATE (NO CODE SEARCHED YET) -->
-      <section v-else class="initial-guidance-card">
-        <h2 class="guidance-title">Check Existing Puja Request</h2>
-        <p class="guidance-text">
-          Enter the booking reference number given upon your form submission (e.g. <code>KM-2026-ABCDE</code>)
-          to verify its confirmation status and scheduled time.
-        </p>
-        <NuxtLink to="/puja-booking" class="btn-primary-action">
-          Submit A Puja Booking
-        </NuxtLink>
       </section>
     </main>
   </div>
@@ -468,6 +494,116 @@ html.dark .hero-badge {
 .btn-lookup:hover:not(:disabled) {
   background-color: var(--btn-primary-hover);
   border-color: var(--btn-primary-hover);
+}
+
+.lookup-hint {
+  font-size: 0.825rem;
+  color: var(--text-muted);
+  margin: 0.75rem 0 0;
+  line-height: 1.4;
+}
+
+/* ====================================================
+   MULTIPLE BOOKINGS CARD (FOR PHONE LOOKUPS)
+   ==================================================== */
+.multiple-bookings-card {
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 1.5rem 1.75rem;
+  margin-bottom: 2rem;
+}
+
+.multiple-header {
+  margin-bottom: 1rem;
+}
+
+.multiple-badge {
+  display: inline-block;
+  padding: 0.25rem 0.65rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent-text);
+  background-color: rgba(224, 165, 38, 0.12);
+  border: 1px solid var(--border-color);
+  border-radius: 9999px;
+  margin-bottom: 0.35rem;
+}
+
+.multiple-sub {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.multiple-pills-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+}
+
+.multiple-pill-btn {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem 1.15rem;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.multiple-pill-btn:hover {
+  border-color: var(--accent);
+  background-color: var(--bg-card);
+}
+
+.multiple-pill-btn.pill-selected {
+  border-color: var(--accent);
+  background-color: rgba(224, 165, 38, 0.08);
+  font-weight: 600;
+}
+
+.pill-ref {
+  font-family: monospace;
+  font-weight: 700;
+  color: var(--accent-text);
+  font-size: 0.9rem;
+}
+
+.pill-name {
+  flex: 1;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.pill-date {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+}
+
+.pill-tag {
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 4px;
+  letter-spacing: 0.05em;
+}
+
+@media (max-width: 640px) {
+  .multiple-pill-btn {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.35rem;
+  }
 }
 
 /* ====================================================

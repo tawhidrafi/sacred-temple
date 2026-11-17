@@ -143,4 +143,37 @@ describe("Puja Booking Submission & Status Lookup", () => {
     expect(updated?.status).toBe("confirmed");
     expect(updated?.adminNote).toBe("Confirmed for 10:00 AM darshan");
   });
+
+  it("looks up booking status by mobile phone number", async () => {
+    const testPhone = "01819998877";
+    const res1 = await BookingsService.createBookingRequest(db, {
+      pujaId: 1,
+      name: "Animesh Das",
+      phone: testPhone,
+      preferredDate: "2026-11-25",
+      gotra: "Sandilya",
+      turnstileToken: "dummy-token",
+    });
+
+    const res2 = await BookingsService.createBookingRequest(db, {
+      pujaId: 1,
+      name: "Animesh Das",
+      phone: testPhone,
+      preferredDate: "2026-11-28",
+      gotra: "Sandilya",
+      turnstileToken: "dummy-token",
+    });
+
+    // Lookup by exact phone
+    const byPhone = await BookingsService.getByRefOrPhone(db, testPhone);
+    expect(byPhone.booking).not.toBeNull();
+    expect(byPhone.items.length).toBe(2);
+    expect(byPhone.booking?.name).toBe("Animesh Das");
+    expect([res1.ref, res2.ref]).toContain(byPhone.booking!.ref);
+
+    // Lookup by reference code
+    const byRef = await BookingsService.getByRefOrPhone(db, res1.ref);
+    expect(byRef.booking).not.toBeNull();
+    expect(byRef.booking?.ref).toBe(res1.ref);
+  });
 });

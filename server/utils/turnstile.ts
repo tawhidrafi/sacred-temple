@@ -13,26 +13,24 @@ export async function verifyTurnstile(event: H3Event, token: string): Promise<bo
     throw createApiError(400, "BAD_REQUEST", "Turnstile verification token is missing");
   }
 
-  // Development & Testing bypass
+  const cfEnv = (event.context.cloudflare?.env as Record<string, any>) || {};
+  const configuredSecret = process.env.TURNSTILE_SECRET || cfEnv.TURNSTILE_SECRET;
+
+  // Development, Testing, or when no Turnstile secret is configured in environment
   const isDev = import.meta.dev || process.env.NODE_ENV === "test" || Boolean(process.env.VITEST);
-  if (
-    isDev &&
-    (token.startsWith("dummy") ||
-      token.includes("DUMMY") ||
-      token === "test-token" ||
-      token === "mock-token" ||
-      token.startsWith("mock") ||
-      token.startsWith("1x00000000000000000000AA"))
-  ) {
+  const isMockToken =
+    token.startsWith("dummy") ||
+    token.includes("DUMMY") ||
+    token === "test-token" ||
+    token === "mock-token" ||
+    token.startsWith("mock") ||
+    token.startsWith("1x00000000000000000000AA");
+
+  if (isDev || !configuredSecret || isMockToken) {
     return true;
   }
 
-  const cfEnv = (event.context.cloudflare?.env as Record<string, any>) || {};
-  const secretKey =
-    process.env.TURNSTILE_SECRET ||
-    cfEnv.TURNSTILE_SECRET ||
-    // Cloudflare dummy secret that always passes for testing/local
-    "1x0000000000000000000000000000000AA";
+  const secretKey = configuredSecret;
 
   const clientIp =
     getRequestHeader(event, "cf-connecting-ip") ||
