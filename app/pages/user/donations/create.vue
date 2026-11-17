@@ -62,7 +62,7 @@ onMounted(async () => {
     const catRes = await $fetch<{ categories: CategoryItem[] }>("/api/public/donation-categories");
     if (catRes?.categories && catRes.categories.length > 0) {
       categories.value = catRes.categories;
-      selectedCategoryId.value = catRes.categories[0].id;
+      selectedCategoryId.value = catRes.categories[0]?.id || null;
     }
 
     // 2. Prefill user profile info

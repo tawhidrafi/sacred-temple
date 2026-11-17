@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const parsed = devoteeDonationCreateSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createApiError(400, "VALIDATION_FAILED", "Invalid donation submission", parsed.error.format());
+    throw createApiError(400, "VALIDATION_FAILED", "Invalid donation submission", parsed.error.flatten().fieldErrors);
   }
 
   try {

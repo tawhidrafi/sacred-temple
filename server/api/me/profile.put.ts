@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const parsed = devoteeProfileUpdateSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createApiError(400, "VALIDATION_FAILED", "Invalid profile update data", parsed.error.format());
+    throw createApiError(400, "VALIDATION_FAILED", "Invalid profile update data", parsed.error.flatten().fieldErrors);
   }
 
   try {

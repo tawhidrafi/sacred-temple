@@ -28,7 +28,7 @@ const handleChangePassword = async () => {
 
   const validation = devoteeChangePasswordSchema.safeParse(input);
   if (!validation.success) {
-    errorMessage.value = validation.error.errors[0]?.message || "Please check your passwords.";
+    errorMessage.value = validation.error.issues[0]?.message || "Please check your passwords.";
     return;
   }
 

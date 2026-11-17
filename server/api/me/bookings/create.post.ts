@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const parsed = devoteePujaBookingCreateSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createApiError(400, "VALIDATION_FAILED", "Invalid puja booking details", parsed.error.format());
+    throw createApiError(400, "VALIDATION_FAILED", "Invalid puja booking details", parsed.error.flatten().fieldErrors);
   }
 
   try {

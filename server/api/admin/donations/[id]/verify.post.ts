@@ -1,7 +1,7 @@
-import { getDb } from "../../../db";
-import { DonationsService } from "../../../services/donations";
-import { requireRole } from "../../../utils/session";
-import { createApiError } from "../../../utils/errors";
+import { getDb } from "../../../../db";
+import { DonationsService } from "../../../../services/donations";
+import { requireRole } from "../../../../utils/session";
+import { createApiError } from "../../../../utils/errors";
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireRole(event, ["admin", "editor"]);

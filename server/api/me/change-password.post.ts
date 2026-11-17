@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
   const parsed = devoteeChangePasswordSchema.safeParse(rawBody);
 
   if (!parsed.success) {
-    throw createApiError(400, "VALIDATION_FAILED", "Invalid password data", parsed.error.format());
+    throw createApiError(400, "VALIDATION_FAILED", "Invalid password data", parsed.error.flatten().fieldErrors);
   }
 
   const auth = getAuth(event);

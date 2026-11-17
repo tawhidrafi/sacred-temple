@@ -113,7 +113,7 @@ onMounted(async () => {
       availableAddons.value = res.addons || [];
       availableSlots.value = res.timeSlots || [];
       if (availableSlots.value.length > 0 && !selectedSlotId.value) {
-        selectedSlotId.value = availableSlots.value[0].id;
+        selectedSlotId.value = availableSlots.value[0]?.id || "";
       }
     } else {
       fetchError.value = "Selected puja service could not be found.";
