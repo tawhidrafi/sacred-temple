@@ -1,4 +1,3 @@
-import { setHeader } from "h3";
 import { getDb } from "../../../db";
 import { PujasService } from "../../../services/pujas";
 import { createApiError } from "../../../utils/errors";
@@ -10,16 +9,11 @@ export default defineEventHandler(async (event) => {
   }
 
   const db = getDb(event);
-  setHeader(
-    event,
-    "Cache-Control",
-    "public, max-age=60, s-maxage=300, stale-while-revalidate=600"
-  );
-  const puja = await PujasService.getPublicBySlug(db, slug);
+  const result = await PujasService.getPublicPujaBySlug(db, slug);
 
-  if (!puja) {
-    throw createApiError(404, "NOT_FOUND", `Puja with slug '${slug}' not found`);
+  if (!result) {
+    throw createApiError(404, "NOT_FOUND", `Puja '${slug}' not found`);
   }
 
-  return puja;
+  return result;
 });

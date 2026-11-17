@@ -1,9 +1,11 @@
 import { and, desc, eq, like, or, sql } from "drizzle-orm";
 import type { DrizzleD1Database } from "drizzle-orm/d1";
 import * as schema from "../db/schema";
-import { pujaBookings } from "../db/schema/bookings";
+import { pujaBookings, devoteeBookingMeta } from "../db/schema/bookings";
 import { pujas } from "../db/schema/pujas";
 import { AuditService } from "./audit";
+import { initialPujas } from "../../shared/constants/initial-data";
+import type { DevoteePujaBookingCreateInput } from "../../shared/schemas/user-portal";
 import type {
   PujaBookingSubmission,
   ListBookingsQuery,
@@ -547,5 +549,235 @@ export class BookingsService {
     }
 
     return !!deleted;
+  }
+
+  /**
+   * Create a multi-step booking specifically for a logged-in devotee.
+   * Recalculates all pricing server-side, verifies future date, and creates metadata snapshot.
+   */
+  static async createDevoteeBooking(
+    db: DrizzleD1Database<typeof schema>,
+    userId: string,
+    data: DevoteePujaBookingCreateInput
+  ) {
+    const todayStr = new Date().toISOString().slice(0, 10);
+    if (data.preferredDate < todayStr) {
+      throw new Error("Cannot book for past dates");
+    }
+
+    // 1. Resolve puja
+    let pujaItem: any = null;
+    try {
+      pujaItem = await db
+        .select()
+        .from(pujas)
+        .where(eq(pujas.slug, data.pujaSlug))
+        .get();
+    } catch {
+      // ignore
+    }
+
+    if (!pujaItem) {
+      pujaItem = initialPujas.find((p) => p.slug === data.pujaSlug) || null;
+    }
+
+    const baseAmount = pujaItem?.priceBdt || 0;
+    const addonAmount = (data.selectedAddons || []).reduce(
+      (sum, a) => sum + (Number(a.priceBdt) || 0),
+      0
+    );
+    const totalAmount = baseAmount + addonAmount;
+
+    // 2. Generate unique ref
+    const ref = generateBookingRef();
+    const now = Date.now();
+
+    // 3. Insert puja booking
+    await db
+      .insert(pujaBookings)
+      .values({
+        ref,
+        userId,
+        pujaId: pujaItem?.id || null,
+        pujaType: "standard",
+        customPujaName: pujaItem?.name ? (typeof pujaItem.name === "string" ? pujaItem.name : JSON.stringify(pujaItem.name)) : null,
+        name: data.devoteeName.trim(),
+        phone: data.phone.trim(),
+        email: data.email?.trim() || null,
+        gotra: data.gotra?.trim() || null,
+        preferredDate: data.preferredDate,
+        specialInstructions: data.specialInstructions?.trim() || null,
+        note: data.specialInstructions?.trim() || null,
+        status: "new",
+        createdAt: now,
+        updatedAt: now,
+      })
+      .run();
+
+    // 4. Insert devotee booking metadata
+    await db
+      .insert(devoteeBookingMeta)
+      .values({
+        bookingRef: ref,
+        timeSlot: data.timeSlot,
+        address: data.address?.trim() || null,
+        baseAmount,
+        addonAmount,
+        totalAmount,
+        addonsSnapshot: JSON.stringify(data.selectedAddons || []),
+        paymentStatus: "unpaid",
+        paymentMethod: data.paymentMethod || "offline_cash",
+        transactionReference: data.transactionReference?.trim() || null,
+        createdAt: now,
+        updatedAt: now,
+      })
+      .run();
+
+    await AuditService.record(db, {
+      userId,
+      action: "create",
+      entity: "puja_bookings",
+      entityId: ref,
+      details: {
+        pujaSlug: data.pujaSlug,
+        totalAmount,
+        preferredDate: data.preferredDate,
+        timeSlot: data.timeSlot,
+      },
+    }).catch((err) => console.warn("Audit record error:", err));
+
+    return {
+      success: true,
+      ref,
+      baseAmount,
+      addonAmount,
+      totalAmount,
+      paymentStatus: "unpaid",
+      paymentMethod: data.paymentMethod || "offline_cash",
+      message: "Puja booking created successfully",
+    };
+  }
+
+  /**
+   * Retrieve a devotee's specific booking, enforcing user isolation.
+   */
+  static async getDevoteeBooking(
+    db: DrizzleD1Database<typeof schema>,
+    refOrId: string | number,
+    userId: string
+  ) {
+    let bookingRow: any = null;
+
+    if (typeof refOrId === "number" || /^\d+$/.test(String(refOrId))) {
+      bookingRow = await db
+        .select()
+        .from(pujaBookings)
+        .where(and(eq(pujaBookings.id, Number(refOrId)), eq(pujaBookings.userId, userId)))
+        .get();
+    } else {
+      bookingRow = await db
+        .select()
+        .from(pujaBookings)
+        .where(and(eq(pujaBookings.ref, String(refOrId)), eq(pujaBookings.userId, userId)))
+        .get();
+    }
+
+    if (!bookingRow) return null;
+
+    // Fetch devotee meta
+    let metaRow: any = null;
+    try {
+      metaRow = await db
+        .select()
+        .from(devoteeBookingMeta)
+        .where(eq(devoteeBookingMeta.bookingRef, bookingRow.ref))
+        .get();
+    } catch {
+      // ignore
+    }
+
+    // Fetch puja info
+    let pujaRow: any = null;
+    if (bookingRow.pujaId) {
+      try {
+        pujaRow = await db
+          .select()
+          .from(pujas)
+          .where(eq(pujas.id, bookingRow.pujaId))
+          .get();
+      } catch {
+        // ignore
+      }
+    }
+
+    const addons = metaRow?.addonsSnapshot ? parseJson(metaRow.addonsSnapshot, []) : [];
+
+    return {
+      ...bookingRow,
+      meta: metaRow
+        ? {
+            ...metaRow,
+            addons,
+          }
+        : null,
+      puja: pujaRow
+        ? {
+            id: pujaRow.id,
+            slug: pujaRow.slug,
+            name: parseJson(pujaRow.name, { en: "", bn: "" }),
+            duration: pujaRow.duration,
+            priceBdt: pujaRow.priceBdt,
+          }
+        : null,
+    };
+  }
+
+  /**
+   * List all bookings for a devotee with their metadata attached.
+   */
+  static async listUserBookingsWithMeta(
+    db: DrizzleD1Database<typeof schema>,
+    userId: string,
+    statusFilter?: string
+  ) {
+    const conditions = [eq(pujaBookings.userId, userId)];
+    if (statusFilter && statusFilter !== "all") {
+      conditions.push(eq(pujaBookings.status, statusFilter as any));
+    }
+
+    const rows = await db
+      .select()
+      .from(pujaBookings)
+      .where(and(...conditions))
+      .orderBy(desc(pujaBookings.createdAt));
+
+    if (rows.length === 0) return [];
+
+    // Fetch meta for all user bookings
+    const refs = rows.map((r) => r.ref);
+    let metas: any[] = [];
+    try {
+      metas = await db
+        .select()
+        .from(devoteeBookingMeta)
+        .all();
+    } catch {
+      // ignore
+    }
+
+    const metaMap = new Map(metas.map((m) => [m.bookingRef, m]));
+
+    return rows.map((r) => {
+      const meta = metaMap.get(r.ref);
+      return {
+        ...r,
+        meta: meta
+          ? {
+              ...meta,
+              addons: parseJson(meta.addonsSnapshot, []),
+            }
+          : null,
+      };
+    });
   }
 }

@@ -5,6 +5,11 @@ import * as schema from "../db/schema";
 import { pujas } from "../db/schema/pujas";
 import { AuditService } from "./audit";
 import { purgeCache } from "../utils/cache";
+import {
+  initialPujas,
+  initialAddons,
+  initialTimeSlots,
+} from "../../shared/constants/initial-data";
 import type {
   CreatePujaInput,
   UpdatePujaInput,
@@ -348,6 +353,122 @@ export class PujasService {
     const row = rows[0];
     if (!row) return null;
     return this.formatRow(row);
+  }
+
+  /**
+   * Public list of active pujas for devotee browsing and booking.
+   */
+  static async listPublicPujas(db: DrizzleD1Database<typeof schema>) {
+    try {
+      const rows = await db
+        .select()
+        .from(pujas)
+        .where(and(eq(pujas.active, true), eq(pujas.bookable, true)))
+        .orderBy(asc(pujas.sortOrder), asc(pujas.id));
+
+      if (rows && rows.length > 0) {
+        return rows.map((r) => {
+          const formatted = this.formatRow(r);
+          const meta = initialPujas.find((ip) => ip.slug === r.slug);
+          return {
+            ...formatted,
+            shortDescription: meta?.shortDescription || formatted.description,
+            significance: meta?.significance,
+            requirements: meta?.requirements,
+            image: meta?.image || "/images/deities/kali.webp",
+          };
+        });
+      }
+    } catch {
+      // Fall back to initial seed data
+    }
+    return initialPujas;
+  }
+
+  /**
+   * Public detail of a puja with associated addons and time slots.
+   */
+  static async getPublicPujaBySlug(db: DrizzleD1Database<typeof schema>, slug: string) {
+    let pujaItem: any = null;
+
+    try {
+      const rows = await db
+        .select()
+        .from(pujas)
+        .where(and(eq(pujas.slug, slug), eq(pujas.active, true)))
+        .limit(1);
+
+      if (rows[0]) {
+        const formatted = this.formatRow(rows[0]);
+        const meta = initialPujas.find((ip) => ip.slug === slug);
+        pujaItem = {
+          ...formatted,
+          shortDescription: meta?.shortDescription || formatted.description,
+          significance: meta?.significance,
+          requirements: meta?.requirements,
+          image: meta?.image || "/images/deities/kali.webp",
+        };
+      }
+    } catch {
+      // ignore
+    }
+
+    if (!pujaItem) {
+      pujaItem = initialPujas.find((ip) => ip.slug === slug) || null;
+    }
+
+    if (!pujaItem) return null;
+
+    // Fetch addons
+    let addons: any[] = [];
+    try {
+      const addonRows = await db
+        .select()
+        .from(schema.pujaAddons)
+        .where(eq(schema.pujaAddons.status, "active"));
+      if (addonRows && addonRows.length > 0) {
+        addons = addonRows.map((a) => ({
+          id: `addon-${a.id}`,
+          name: parseJson(a.name, { en: "", bn: "" }),
+          description: a.description ? parseJson(a.description, { en: "", bn: "" }) : null,
+          priceBdt: a.price,
+        }));
+      }
+    } catch {
+      // ignore
+    }
+    if (addons.length === 0) {
+      addons = initialAddons;
+    }
+
+    // Fetch time slots
+    let timeSlots: any[] = [];
+    try {
+      const slotRows = await db
+        .select()
+        .from(schema.pujaTimeSlots)
+        .where(eq(schema.pujaTimeSlots.status, "active"));
+      if (slotRows && slotRows.length > 0) {
+        timeSlots = slotRows.map((s) => ({
+          id: `slot-${s.id}`,
+          name: parseJson(s.name || "{}", { en: `${s.startTime} - ${s.endTime}`, bn: "" }),
+          startTime: s.startTime,
+          endTime: s.endTime,
+          capacity: s.capacity,
+        }));
+      }
+    } catch {
+      // ignore
+    }
+    if (timeSlots.length === 0) {
+      timeSlots = initialTimeSlots;
+    }
+
+    return {
+      puja: pujaItem,
+      addons,
+      timeSlots,
+    };
   }
 
   private static formatRow(row: typeof pujas.$inferSelect): FormattedPujaItem {
