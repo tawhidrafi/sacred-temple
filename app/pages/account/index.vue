@@ -8,12 +8,14 @@ useHead({
 
 const { isAuthenticated, isPending, isStaff, currentUser, role, logout } = useAuth();
 
-// Route guard: /account requires login
+// Route guard: /account redirects directly to the Devotee Portal Dashboard
 watchEffect(() => {
   if (isPending.value) return;
 
   if (!isAuthenticated.value) {
-    navigateTo("/admin/login");
+    navigateTo("/login");
+  } else {
+    navigateTo("/user/dashboard");
   }
 });
 </script>

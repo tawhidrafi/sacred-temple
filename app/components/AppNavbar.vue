@@ -2,9 +2,17 @@
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
 import { useTranslation } from "~/composables/useTranslation";
+import { useAuth } from "~/composables/useAuth";
 
 const route = useRoute();
 const { currentLocale, setLocale, t } = useTranslation();
+const { isAuthenticated, isStaff } = useAuth();
+
+const userPortalDestination = computed(() => {
+  if (!isAuthenticated.value) return "/login";
+  if (isStaff.value) return "/admin";
+  return "/user/dashboard";
+});
 
 // Scroll state for transparent -> glass transition
 const isScrolled = ref(false);
@@ -358,10 +366,10 @@ onBeforeUnmount(() => {
 
         <!-- 3C. User Icon (Direct redirect to Dashboard or Login, no submenu) -->
         <NuxtLink
-          to="/admin"
+          :to="userPortalDestination"
           class="action-btn user-btn"
-          title="Admin / Devotee Console"
-          aria-label="Admin / Devotee Console"
+          title="Devotee & Staff Portal"
+          aria-label="Devotee & Staff Portal"
         >
           <svg
             class="btn-icon user-icon"
