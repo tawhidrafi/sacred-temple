@@ -1,6 +1,9 @@
 <script setup lang="ts">
 import { ref, computed, watch, onMounted } from "vue";
 import { useRoute, useRouter } from "vue-router";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t, currentLocale } = useTranslation();
 
 interface BookingStatusData {
   ref: string;
@@ -119,7 +122,7 @@ const formatStatusLabel = (status: string) => {
 
 const formatPujaTitle = (raw: any) => {
   if (typeof raw === "object" && raw) {
-    return raw.en || raw.bn || "Sacred Puja";
+    return currentLocale.value === "bn" ? raw.bn || raw.en || "Sacred Puja" : raw.en || raw.bn || "Sacred Puja";
   }
   return raw || "Sacred Puja";
 };
@@ -148,14 +151,14 @@ useHead({
 </script>
 
 <template>
-  <div class="status-page" lang="en">
+  <div class="status-page" :lang="currentLocale">
     <!-- HERO HEADER -->
     <header class="page-hero">
       <div class="hero-inner">
-        <span class="hero-badge">Devotee Sankalpa Desk</span>
-        <h1 class="hero-title">Puja Booking Status</h1>
+        <span class="hero-badge">{{ t('status.hero_badge', 'Devotee Sankalpa Desk') }}</span>
+        <h1 class="hero-title">{{ t('status.hero_title', 'Puja Booking Status') }}</h1>
         <p class="hero-subtitle">
-          Track the review, confirmation, and scheduling of your sacred puja offering at Golpahar Kali Mandir.
+          {{ t('status.hero_subtitle', 'Track the review, confirmation, and scheduling of your sacred puja offering at Golpahar Kali Mandir.') }}
         </p>
         <div class="hero-divider" aria-hidden="true"></div>
       </div>
@@ -174,7 +177,7 @@ useHead({
       <section class="lookup-card" aria-label="Reference or Phone Lookup">
         <form @submit.prevent="handleManualLookup" class="lookup-form">
           <label class="lookup-label" for="ref-input">
-            Enter Booking Reference Code or Mobile Phone Number
+            {{ t('status.lookup_label', 'Enter Booking Reference Code or Mobile Phone Number') }}
           </label>
           <div class="lookup-input-wrap">
             <input
@@ -187,7 +190,7 @@ useHead({
               required
             />
             <button type="submit" class="btn-lookup" :disabled="loading">
-              <span>{{ loading ? 'Checking...' : 'Check Status' }}</span>
+              <span>{{ loading ? t('common.loading', 'Checking...') : t('status.lookup_btn', 'Check Status') }}</span>
             </button>
           </div>
           <p class="lookup-hint">

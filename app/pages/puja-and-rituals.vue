@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { computed } from "vue";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t, currentLocale } = useTranslation();
 
 interface PujaDisplayItem {
   id: number | string;
@@ -72,6 +75,7 @@ const { data: pujasResponse, status: pujasStatus } = await useFetch<{ items: any
 
 // Format and sort pujas
 const displayedPujas = computed<PujaDisplayItem[]>(() => {
+  const isBn = currentLocale.value === "bn";
   const items = pujasResponse.value?.items;
   if (Array.isArray(items) && items.length > 0) {
     return items
@@ -79,9 +83,15 @@ const displayedPujas = computed<PujaDisplayItem[]>(() => {
       .map((p) => ({
         id: p.id || p.slug,
         slug: p.slug || "",
-        name: typeof p.name === "object" ? p.name?.en || p.name?.bn || "Puja" : p.name || "Puja",
-        description: typeof p.description === "object" ? p.description?.en || p.description?.bn || "" : p.description || "",
-        offered: typeof p.offered === "object" ? p.offered?.en || p.offered?.bn || "" : p.offered || "",
+        name: typeof p.name === "object"
+          ? (isBn ? (p.name?.bn || p.name?.en) : (p.name?.en || p.name?.bn)) || "Puja"
+          : p.name || "Puja",
+        description: typeof p.description === "object"
+          ? (isBn ? (p.description?.bn || p.description?.en) : (p.description?.en || p.description?.bn)) || ""
+          : p.description || "",
+        offered: typeof p.offered === "object"
+          ? (isBn ? (p.offered?.bn || p.offered?.en) : (p.offered?.en || p.offered?.bn)) || ""
+          : p.offered || "",
         priceBdt: Number(p.priceBdt || p.price_bdt || 0),
         duration: p.duration || "",
         bookable: p.bookable !== false,
@@ -114,15 +124,14 @@ useHead({
 </script>
 
 <template>
-  <div class="puja-page" lang="en">
+  <div class="puja-page" :lang="currentLocale">
     <!-- 1. HERO HEADER -->
     <header class="page-hero">
       <div class="hero-inner">
-        <span class="hero-badge">Sacred Worship &amp; Devotion</span>
-        <h1 class="hero-title">Puja &amp; Daily Rituals</h1>
+        <span class="hero-badge">{{ t('puja.hero_badge', 'Sacred Worship & Devotion') }}</span>
+        <h1 class="hero-title">{{ t('puja.hero_title', 'Puja & Daily Rituals') }}</h1>
         <p class="hero-subtitle">
-          Vedic rituals, sacred sankalpa offerings, and timeless daily aartis conducted with solemn devotion
-          and traditional sanctity at Golpahar Mohashoshan Kali Mandir.
+          {{ t('puja.hero_subtitle', 'Vedic rituals, sacred sankalpa offerings, and timeless daily aartis conducted with solemn devotion and traditional sanctity at Golpahar Mohashoshan Kali Mandir.') }}
         </p>
         <div class="hero-divider" aria-hidden="true"></div>
       </div>
@@ -133,7 +142,7 @@ useHead({
       <section class="pujas-section" aria-label="Puja Offerings and Seva Charges">
         <div v-if="pujasStatus === 'pending' && displayedPujas.length === 0" class="loading-state">
           <div class="spinner" aria-hidden="true"></div>
-          <p>Loading consecrated puja offerings...</p>
+          <p>{{ t('common.loading', 'Loading consecrated puja offerings...') }}</p>
         </div>
 
         <div v-else class="pujas-grid">
@@ -166,7 +175,7 @@ useHead({
                 class="btn-book-puja"
                 :aria-label="`Request booking for ${puja.name}`"
               >
-                Request Puja Booking
+                {{ t('puja.request_booking', 'Request Puja Booking') }}
               </NuxtLink>
             </div>
           </article>
@@ -176,16 +185,15 @@ useHead({
       <!-- 4. BOTTOM PILGRIM DARSHAN CARD -->
       <section class="visitation-card" aria-label="Pilgrim Information">
         <div class="visitation-text">
-          <span class="visitation-kicker">Devotee Assistance Desk</span>
-          <h2 class="visitation-title">Custom Rites &amp; Special Occasions</h2>
+          <span class="visitation-kicker">{{ t('puja.custom_kicker', 'Devotee Assistance Desk') }}</span>
+          <h2 class="visitation-title">{{ t('puja.custom_title', 'Custom Rites & Special Occasions') }}</h2>
           <p class="visitation-desc">
-            For ancestral shraddha, special Chandi path, birth blessings, or specific family sankalpa rites,
-            please connect directly with the temple priests or administration office.
+            {{ t('puja.custom_desc', 'For ancestral shraddha, special Chandi path, birth blessings, or specific family sankalpa rites, please connect directly with the temple priests or administration office.') }}
           </p>
         </div>
         <div class="visitation-actions">
           <NuxtLink to="/contact" class="btn-primary-action">
-            Contact Devotee Desk
+            {{ t('common.contact_desk', 'Contact Devotee Desk') }}
           </NuxtLink>
         </div>
       </section>

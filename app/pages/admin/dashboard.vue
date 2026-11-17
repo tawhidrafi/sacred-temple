@@ -16,6 +16,7 @@ import {
   THEME_PALETTES,
 } from "~~/shared/schemas/siteSettings";
 import { SITE_NAME, SITE_SHORT_NAME } from "~~/shared/constants/brand";
+import { defaultTranslations, type SiteTranslations, type TranslationItem } from "~~/shared/constants/translations";
 
 useHead({
   title: `${SITE_NAME} - Admin Console`,
@@ -37,7 +38,7 @@ watchEffect(() => {
 
 const isSidebarOpen = ref(false);
 const activeModule = ref<
-  "dashboard" | "schedule" | "pujas" | "events" | "deities" | "notices" | "bookings" | "messages" | "about_cms" | "site_settings"
+  "dashboard" | "schedule" | "pujas" | "events" | "deities" | "notices" | "bookings" | "messages" | "about_cms" | "site_settings" | "translations"
 >("dashboard");
 
 // Current date formatted
@@ -64,6 +65,7 @@ const navItems = [
   { id: "messages", label: "Contact Messages", badge: "Inquiries" },
   { id: "about_cms", label: "About Page Content", badge: "CMS" },
   { id: "site_settings", label: "General Site Settings", badge: "Global" },
+  { id: "translations", label: "Language Translations", badge: "i18n" },
 ];
 
 // Navigation Groups for clean sidebar structure
@@ -109,6 +111,7 @@ const navGroups = computed(() => [
     title: "Configuration",
     items: [
       { id: "site_settings", label: "General Site Settings", badge: "Global" },
+      { id: "translations", label: "Language Translations", badge: "i18n" },
     ],
   },
 ]);
@@ -241,6 +244,95 @@ const resetAboutCms = async () => {
 };
 
 // =========================================================================
+// TRANSLATIONS CMS STATE & METHODS
+// =========================================================================
+const translationsData = ref<SiteTranslations>(JSON.parse(JSON.stringify(defaultTranslations)));
+const translationSearch = ref("");
+const translationCategory = ref<string>("all");
+const loadingTranslations = ref(false);
+const savingTranslations = ref(false);
+
+const translationCategories = [
+  { id: "all", label: "All Categories" },
+  { id: "nav", label: "Navigation" },
+  { id: "footer", label: "Footer" },
+  { id: "common", label: "Common & Buttons" },
+  { id: "about", label: "About Page" },
+  { id: "deities", label: "Deities Page" },
+  { id: "puja", label: "Puja & Rituals" },
+  { id: "events", label: "Festivals & Events" },
+  { id: "contact", label: "Contact Page" },
+  { id: "status", label: "Booking Status" },
+];
+
+const fetchTranslationsData = async () => {
+  loadingTranslations.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; translations: SiteTranslations }>("/api/cms/translations");
+    if (res?.translations) {
+      translationsData.value = { ...defaultTranslations, ...res.translations };
+    }
+  } catch (err: any) {
+    console.error("Failed to load translations:", err);
+  } finally {
+    loadingTranslations.value = false;
+  }
+};
+
+const saveTranslationsData = async () => {
+  savingTranslations.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; translations: SiteTranslations }>("/api/cms/translations", {
+      method: "POST",
+      body: { translations: translationsData.value },
+    });
+    if (res.success) {
+      translationsData.value = { ...defaultTranslations, ...res.translations };
+      showToast("Language translations saved successfully!");
+    }
+  } catch (err: any) {
+    showToast(err?.data?.message || err?.message || "Failed to save translations", "error");
+  } finally {
+    savingTranslations.value = false;
+  }
+};
+
+const resetTranslationsData = async () => {
+  if (!confirm("Are you sure you want to reset all translations to default English & Bengali text?")) return;
+  savingTranslations.value = true;
+  try {
+    const res = await $fetch<{ success: boolean; translations: SiteTranslations }>("/api/cms/translations", {
+      method: "POST",
+      body: { action: "reset" },
+    });
+    if (res.success) {
+      translationsData.value = JSON.parse(JSON.stringify(res.translations));
+      showToast("Language translations reset to temple defaults!");
+    }
+  } catch (err: any) {
+    showToast(err?.data?.message || err?.message || "Failed to reset translations", "error");
+  } finally {
+    savingTranslations.value = false;
+  }
+};
+
+const filteredTranslationsList = computed(() => {
+  const q = translationSearch.value.trim().toLowerCase();
+  const cat = translationCategory.value;
+
+  return Object.entries(translationsData.value).filter(([key, item]) => {
+    if (cat !== "all" && item.category !== cat) return false;
+    if (!q) return true;
+    return (
+      key.toLowerCase().includes(q) ||
+      (item.label && item.label.toLowerCase().includes(q)) ||
+      (item.en && item.en.toLowerCase().includes(q)) ||
+      (item.bn && item.bn.toLowerCase().includes(q))
+    );
+  });
+});
+
+// =========================================================================
 // TOAST NOTIFICATIONS
 // =========================================================================
 const toast = reactive({
@@ -299,6 +391,7 @@ onMounted(() => {
   fetchMessagesData();
   fetchAboutCmsData();
   fetchSiteSettingsData();
+  fetchTranslationsData();
 });
 
 // Filtered schedule list
@@ -2003,7 +2096,12 @@ const executeDeleteEvent = async () => {
             aria-label="Open sidebar"
             @click="isSidebarOpen = true"
           >
-            <span>Menu</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="hamburger-svg" aria-hidden="true">
+              <line x1="3" y1="12" x2="21" y2="12" />
+              <line x1="3" y1="6" x2="21" y2="6" />
+              <line x1="3" y1="18" x2="21" y2="18" />
+            </svg>
+            <span class="hamburger-label">Menu</span>
           </button>
 
           <div class="breadcrumb">
@@ -2016,7 +2114,12 @@ const executeDeleteEvent = async () => {
                 activeModule === 'pujas' ? 'Pujas & Services' :
                 activeModule === 'events' ? 'Festivals & Events' :
                 activeModule === 'deities' ? 'Deities & Shrines' :
-                activeModule === 'notices' ? 'Temple Notices' : activeModule === 'bookings' ? 'Puja Bookings' : activeModule === 'messages' ? 'Contact Messages' : 'About Page Content'
+                activeModule === 'notices' ? 'Temple Notices' :
+                activeModule === 'bookings' ? 'Puja Bookings' :
+                activeModule === 'messages' ? 'Contact Messages' :
+                activeModule === 'about_cms' ? 'About Page Content' :
+                activeModule === 'site_settings' ? 'General Site Settings' :
+                activeModule === 'translations' ? 'Language Translations' : 'Dashboard'
               }}
             </span>
           </div>
@@ -2046,9 +2149,13 @@ const executeDeleteEvent = async () => {
           </button>
 
           <!-- Public site shortcut -->
-          <NuxtLink to="/" target="_blank" class="btn-live-site">
-            <span>View Site</span>
-            
+          <NuxtLink to="/" target="_blank" class="btn-live-site" title="View live public site">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="topbar-link-svg" aria-hidden="true">
+              <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+              <polyline points="15 3 21 3 21 9"></polyline>
+              <line x1="10" y1="14" x2="21" y2="3"></line>
+            </svg>
+            <span class="btn-live-site-text">View Site</span>
           </NuxtLink>
         </div>
       </header>
@@ -4212,6 +4319,176 @@ const executeDeleteEvent = async () => {
             </div>
           </div>
         </div>
+
+        <!-- =============================================================== -->
+        <!-- TAB: LANGUAGE TRANSLATIONS CMS                                  -->
+        <!-- =============================================================== -->
+        <div v-else-if="activeModule === 'translations'" class="tab-pane">
+          <!-- Module Header -->
+          <div class="module-header-row">
+            <div>
+              <h1 class="module-title">Language Translations (English &amp; Bengali)</h1>
+              <p class="module-subtitle">
+                Manually manage, translate, and refine all sentences and phrases across the temple portal. Changes reflect instantly when devotees switch language.
+              </p>
+            </div>
+            <div class="module-header-actions">
+              <button
+                type="button"
+                class="btn-refresh"
+                :disabled="savingTranslations"
+                @click="resetTranslationsData"
+                title="Reset all translations to temple default strings"
+              >
+                Reset Defaults
+              </button>
+              <button
+                type="button"
+                class="btn-primary"
+                :disabled="savingTranslations"
+                @click="saveTranslationsData"
+              >
+                <span>{{ savingTranslations ? 'Saving...' : 'Save Translations' }}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Loading state -->
+          <div v-if="loadingTranslations" class="schedule-table-card">
+            <div class="loading-state">
+              <div class="spinner"></div>
+              <span>Loading translation strings from database...</span>
+            </div>
+          </div>
+
+          <div v-else class="translations-container">
+            <!-- Filter & Search Toolbar -->
+            <div class="table-toolbar" style="margin-bottom: 1.25rem;">
+              <div class="search-wrap">
+                <input
+                  v-model="translationSearch"
+                  type="text"
+                  placeholder="Search by key, English text, or Bengali phrase..."
+                  class="search-input"
+                />
+              </div>
+
+              <!-- Category Pills -->
+              <div class="filter-tabs">
+                <button
+                  v-for="cat in translationCategories"
+                  :key="cat.id"
+                  type="button"
+                  class="filter-tab"
+                  :class="{ 'tab-active': translationCategory === cat.id }"
+                  @click="translationCategory = cat.id"
+                >
+                  {{ cat.label }}
+                </button>
+              </div>
+            </div>
+
+            <!-- Matching count badge -->
+            <div style="font-size: 0.82rem; color: #64748b; margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center;">
+              <span>Showing {{ filteredTranslationsList.length }} phrases</span>
+              <span v-if="translationSearch" style="cursor: pointer; color: #dc2626;" @click="translationSearch = ''">Clear Search</span>
+            </div>
+
+            <!-- Empty Search State -->
+            <div v-if="filteredTranslationsList.length === 0" class="empty-state">
+              <p class="empty-title">No translation strings found</p>
+              <p class="empty-sub">Try searching with a different keyword or select another category.</p>
+            </div>
+
+            <!-- Translation Rows Grid -->
+            <div v-else class="translations-list">
+              <div
+                v-for="[key, item] in filteredTranslationsList"
+                :key="key"
+                class="cms-card translation-item-card"
+                style="margin-bottom: 1rem;"
+              >
+                <div class="cms-card-header" style="padding: 0.75rem 1rem; background: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center;">
+                  <div style="display: flex; align-items: center; gap: 0.5rem; flex-wrap: wrap;">
+                    <span style="font-family: monospace; font-size: 0.8rem; font-weight: 600; color: #0f172a; background: #e2e8f0; padding: 0.15rem 0.45rem; border-radius: 4px;">{{ key }}</span>
+                    <span v-if="item.label" style="font-size: 0.8rem; color: #64748b;">— {{ item.label }}</span>
+                  </div>
+                  <span style="font-size: 0.72rem; text-transform: uppercase; font-weight: 700; color: #b45309; background: #fef3c7; padding: 0.15rem 0.5rem; border-radius: 9999px;">
+                    {{ item.category }}
+                  </span>
+                </div>
+
+                <div class="cms-card-body" style="padding: 1rem;">
+                  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem;">
+                    <!-- English Input -->
+                    <div>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 0.35rem;">
+                        English (EN)
+                      </label>
+                      <textarea
+                        v-if="item.en && item.en.length > 60"
+                        v-model="item.en"
+                        rows="3"
+                        class="cms-input"
+                        style="width: 100%; font-size: 0.875rem;"
+                      ></textarea>
+                      <input
+                        v-else
+                        v-model="item.en"
+                        type="text"
+                        class="cms-input"
+                        style="width: 100%; font-size: 0.875rem;"
+                      />
+                    </div>
+
+                    <!-- Bengali Input -->
+                    <div>
+                      <label style="display: block; font-size: 0.8rem; font-weight: 600; color: #b45309; margin-bottom: 0.35rem;">
+                        বাংলা (BN)
+                      </label>
+                      <textarea
+                        v-if="(item.bn && item.bn.length > 60) || (item.en && item.en.length > 60)"
+                        v-model="item.bn"
+                        rows="3"
+                        class="cms-input"
+                        style="width: 100%; font-size: 0.875rem; font-family: inherit;"
+                        placeholder="বাংলা অনুবাদ লিখুন..."
+                      ></textarea>
+                      <input
+                        v-else
+                        v-model="item.bn"
+                        type="text"
+                        class="cms-input"
+                        style="width: 100%; font-size: 0.875rem; font-family: inherit;"
+                        placeholder="বাংলা অনুবাদ লিখুন..."
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sticky Save Bar at bottom -->
+            <div style="margin-top: 1.5rem; display: flex; justify-content: flex-end; gap: 0.75rem;">
+              <button
+                type="button"
+                class="btn-refresh"
+                :disabled="savingTranslations"
+                @click="resetTranslationsData"
+              >
+                Reset Defaults
+              </button>
+              <button
+                type="button"
+                class="btn-primary"
+                :disabled="savingTranslations"
+                @click="saveTranslationsData"
+              >
+                <span>{{ savingTranslations ? 'Saving...' : 'Save Translations' }}</span>
+              </button>
+            </div>
+          </div>
+        </div>
       </main>
     </div>
 
@@ -5670,20 +5947,33 @@ const executeDeleteEvent = async () => {
 
 .hamburger-btn {
   display: none;
-  background: transparent;
-  border: none;
+  align-items: center;
+  gap: 0.4rem;
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  border-radius: var(--adm-radius-sm);
   color: var(--adm-text-main);
   cursor: pointer;
-  padding: 0.25rem;
+  padding: 0.4rem 0.65rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.15s ease;
+  min-height: 38px;
 }
 
-.hamburger-btn svg {
-  width: 20px;
-  height: 20px;
+.hamburger-btn:hover {
+  background: var(--adm-bg);
+  border-color: var(--adm-gold, #E0A526);
+}
+
+.hamburger-svg {
+  width: 18px;
+  height: 18px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 1024px) {
-  .hamburger-btn { display: block; }
+  .hamburger-btn { display: inline-flex; }
 }
 
 .breadcrumb {
@@ -5787,6 +6077,12 @@ const executeDeleteEvent = async () => {
   color: var(--adm-black, #6E0516);
 }
 
+.topbar-link-svg {
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+
 .link-arrow {
   width: 13px;
   height: 13px;
@@ -5800,18 +6096,6 @@ const executeDeleteEvent = async () => {
   padding: 2rem 2.25rem 4rem;
   max-width: 1360px;
   width: 100%;
-}
-
-@media (max-width: 640px) {
-  .admin-topbar {
-    padding: 0 1rem;
-  }
-  .crumb-root {
-    max-width: 100px;
-  }
-  .dashboard-body {
-    padding: 1.25rem 1rem 3rem;
-  }
 }
 
 .welcome-banner {
@@ -7911,24 +8195,583 @@ input:checked + .switch-slider-blue {
 }
 
 /* ====================================================
+   TRANSLATIONS MODULE CONTROLS
+   ==================================================== */
+.table-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.search-wrap {
+  flex: 1;
+  min-width: 250px;
+}
+
+.filter-tabs {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.filter-tab {
+  padding: 0.35rem 0.75rem;
+  border-radius: var(--adm-radius-sm);
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-text-muted);
+  font-size: 0.775rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  font-family: inherit;
+}
+
+.filter-tab:hover {
+  background: var(--adm-bg);
+  color: var(--adm-text-main);
+}
+
+.filter-tab.tab-active {
+  background: var(--adm-black);
+  border-color: var(--adm-black);
+  color: #ffffff;
+}
+
+.cms-input {
+  width: 100%;
+  padding: 0.55rem 0.75rem;
+  border-radius: var(--adm-radius-sm);
+  background: var(--adm-surface);
+  border: 1px solid var(--adm-border);
+  color: var(--adm-text-main);
+  font-size: 0.85rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: inherit;
+  box-sizing: border-box;
+}
+
+.cms-input:focus {
+  border-color: var(--adm-black);
+  box-shadow: 0 0 0 1px var(--adm-black);
+}
+
+/* ====================================================
    RESPONSIVE LAYOUT BREAKPOINTS
    ==================================================== */
+
+/* Tablet & Mobile Screens (<= 1024px) */
+@media (max-width: 1024px) {
+  .admin-root {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+  }
+
+  .admin-sidebar {
+    width: min(290px, 85vw);
+  }
+
+  .admin-main-wrapper {
+    margin-left: 0;
+    min-width: 0;
+    width: 100%;
+    overflow-x: hidden;
+  }
+}
+
+/* Medium Tablets & Large Phones (<= 768px) */
 @media (max-width: 768px) {
-  .admin-topbar { padding: 0 1.25rem; }
-  .crumb-root { max-width: 140px; }
-  .dashboard-body { padding: 1.25rem 1rem 3rem; }
-  .schedule-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .actions-col { width: 100%; justify-content: flex-end; }
-  .toggle-col { flex-direction: row; gap: 0.45rem; }
-  .form-row-2 { flex-direction: column; }
-  .puja-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .puja-toggles-col { flex-direction: row; gap: 1.25rem; width: 100%; justify-content: flex-start; }
-  .form-row-3 { flex-direction: column; gap: 0.65rem; }
-  .event-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .deity-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .notice-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .booking-row-item { flex-direction: column; align-items: flex-start; gap: 0.65rem; }
-  .booking-actions-col { width: 100%; justify-content: flex-start; }
+  .admin-topbar {
+    padding: 0 1rem;
+    height: 60px;
+  }
+
+  .dashboard-body {
+    padding: 1.25rem 1rem 3rem;
+    min-width: 0;
+  }
+
+  /* Module Headers & Action Buttons */
+  .module-header-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    margin-bottom: 1.15rem;
+  }
+
+  .module-title {
+    font-size: 1.35rem;
+  }
+
+  .module-header-actions {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .module-header-actions .btn-refresh,
+  .module-header-actions .btn-add-primary,
+  .module-header-actions a.btn-refresh {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-height: 40px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Search & Filter Bars */
+  .filters-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+    margin-bottom: 1rem;
+  }
+
+  .search-box {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-pills {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    padding-bottom: 0.25rem;
+    width: 100%;
+    flex-wrap: nowrap;
+  }
+
+  .filter-pills::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-pill {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  .category-pills-row {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding-bottom: 0.25rem;
+  }
+
+  .category-pills-row::-webkit-scrollbar {
+    display: none;
+  }
+
+  .cat-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Translations Module Filters */
+  .table-toolbar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.65rem;
+  }
+
+  .search-wrap {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .filter-tabs {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+    flex-wrap: nowrap;
+    width: 100%;
+    padding-bottom: 0.25rem;
+  }
+
+  .filter-tabs::-webkit-scrollbar {
+    display: none;
+  }
+
+  .filter-tab {
+    flex-shrink: 0;
+    white-space: nowrap;
+  }
+
+  /* Live Aarti Banner */
+  .next-aarti-banner {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 0.85rem 1rem;
+  }
+
+  .aarti-banner-right {
+    align-items: flex-start;
+    width: 100%;
+  }
+
+  /* List Items & Cards Responsiveness */
+  .schedule-row-item,
+  .puja-row-item,
+  .event-row-item,
+  .deity-row-item,
+  .notice-row-item,
+  .booking-row-item {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.85rem;
+    padding: 1rem;
+  }
+
+  .reorder-col {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.4rem;
+    width: fit-content;
+  }
+
+  .time-col {
+    width: 100%;
+  }
+
+  .details-col,
+  .puja-details-col,
+  .event-details-col,
+  .deity-details-col,
+  .notice-details-col,
+  .booking-puja-col {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .toggle-col {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+  }
+
+  .actions-col {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+
+  .actions-col .btn-action-edit,
+  .actions-col .btn-action-del {
+    flex: 1 1 0;
+    text-align: center;
+    justify-content: center;
+    display: inline-flex;
+    align-items: center;
+    min-height: 38px;
+    padding: 0.45rem;
+  }
+
+  /* Pujas Specific Column Responsiveness */
+  .puja-meta-badge-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+  }
+
+  .puja-toggles-col {
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    min-width: 0;
+    gap: 1rem;
+  }
+
+  /* Events Specific Column Responsiveness */
+  .event-meta-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 0.4rem;
+  }
+
+  .event-controls-col {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+  }
+
+  /* Notices Specific Column Responsiveness */
+  .notice-meta-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    min-width: 0;
+    gap: 0.4rem;
+  }
+
+  .notice-controls-col {
+    width: 100%;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    min-width: 0;
+  }
+
+  /* Bookings Specific Column Responsiveness */
+  .booking-ref-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .booking-devotee-col {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .booking-status-col {
+    width: 100%;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    min-width: 0;
+  }
+
+  .booking-actions-col {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.45rem;
+    justify-content: flex-start;
+  }
+
+  .booking-actions-col button {
+    flex: 1 1 calc(50% - 0.25rem);
+    min-height: 38px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    box-sizing: border-box;
+  }
+
+  /* Form Rows */
+  .form-row-2,
+  .form-row-3 {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  /* CMS Grids */
+  .grid-2-cols,
+  .grid-3-cols,
+  .grid-4-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Mobile Screens (<= 640px) */
+@media (max-width: 640px) {
+  .admin-topbar {
+    padding: 0 0.85rem;
+    height: 56px;
+  }
+
+  /* Breadcrumb cleanup: show only the active page */
+  .crumb-root,
+  .crumb-sep {
+    display: none !important;
+  }
+
+  .crumb-active {
+    font-size: 0.85rem;
+    max-width: 130px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Topbar Right Controls */
+  .topbar-right {
+    gap: 0.45rem;
+  }
+
+  .topbar-notifications-btn {
+    padding: 0.35rem 0.6rem;
+    font-size: 0.75rem;
+  }
+
+  .btn-live-site {
+    padding: 0.35rem 0.55rem;
+  }
+
+  .btn-live-site-text {
+    display: none;
+  }
+
+  /* Hamburger Button */
+  .hamburger-btn {
+    padding: 0.4rem;
+    min-width: 38px;
+    justify-content: center;
+  }
+
+  .hamburger-label {
+    display: none;
+  }
+
+  /* Dashboard Body Spacing */
+  .dashboard-body {
+    padding: 1rem 0.85rem 3rem;
+  }
+
+  /* Modal Dialog Bottom-Sheet Treatment */
+  .modal-backdrop {
+    padding: 0;
+    align-items: flex-end;
+  }
+
+  .modal-dialog,
+  .modal-dialog-sm,
+  .modal-dialog-lg {
+    max-width: 100% !important;
+    width: 100% !important;
+    max-height: 92vh !important;
+    border-radius: 16px 16px 0 0 !important;
+    margin: 0 !important;
+  }
+
+  .modal-header {
+    padding: 0.85rem 1.15rem;
+  }
+
+  .modal-title {
+    font-size: 1.05rem;
+  }
+
+  .modal-body {
+    padding: 1.15rem;
+    max-height: calc(92vh - 120px);
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .modal-footer {
+    padding: 0.75rem 1.15rem;
+    gap: 0.5rem;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .modal-footer button {
+    flex: 1 1 0;
+    min-height: 42px;
+    font-size: 0.85rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Mobile Toast */
+  .admin-toast {
+    top: auto;
+    bottom: 1.25rem;
+    left: 1rem;
+    right: 1rem;
+    max-width: calc(100vw - 2rem);
+    justify-content: center;
+    text-align: center;
+  }
+
+  /* Card Paddings */
+  .cms-card-header {
+    padding: 0.85rem 1rem;
+  }
+
+  .cms-card-body {
+    padding: 1rem;
+  }
+
+  .dash-panel {
+    padding: 1rem;
+  }
+
+  /* Translation Cards */
+  .translation-item-card .cms-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.45rem;
+  }
+}
+
+/* Small Smartphone Screens (<= 480px) */
+@media (max-width: 480px) {
+  .crumb-active {
+    max-width: 105px;
+    font-size: 0.8rem;
+  }
+
+  .topbar-notifications-btn {
+    padding: 0.35rem 0.5rem;
+    font-size: 0.7rem;
+  }
+
+  /* Overview KPI Grid */
+  .kpi-grid {
+    grid-template-columns: 1fr;
+    gap: 0.75rem;
+  }
+
+  .kpi-card {
+    padding: 1rem;
+  }
+
+  /* Quick Actions Grid */
+  .quick-actions-grid {
+    grid-template-columns: 1fr;
+    gap: 0.65rem;
+  }
+
+  /* Module Header Actions Single-Column on Very Narrow Screens */
+  .module-header-actions .btn-refresh,
+  .module-header-actions .btn-add-primary,
+  .module-header-actions a.btn-refresh {
+    flex: 1 1 100%;
+  }
+
+  /* Palette Grid in Site Settings */
+  .palette-presets-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .color-picker-input-group {
+    flex-wrap: wrap;
+  }
+
+  .booking-actions-col button {
+    flex: 1 1 100%;
+  }
 }
 
 .admin-auth-loading {

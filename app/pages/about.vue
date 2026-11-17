@@ -2,11 +2,13 @@
 import { computed } from "vue";
 import { useRoute } from "vue-router";
 import { useAboutData } from "~/composables/useAboutData";
+import { useTranslation } from "~/composables/useTranslation";
 import AboutHero from "~/components/AboutHero.vue";
 import ImageSlider, { type SliderImage } from "~/components/ImageSlider.vue";
 import AboutArticle from "~/components/AboutArticle.vue";
 
 const route = useRoute();
+const { t, currentLocale } = useTranslation();
 const { about, hero, history, administration } = useAboutData();
 
 // Theme state (check route query for SSR, standard theme system for client)
@@ -14,9 +16,9 @@ const isDarkMode = computed(() => {
   return route.query.theme === "dark";
 });
 
-// Dynamic Hero Title & Subtitle in English
+// Dynamic Hero Title & Subtitle
 const heroTitle = computed(() => {
-  return hero.value.title || "Sanctuary of Devotion, Peace & Community";
+  return t("about.hero_title", hero.value.title || "Sanctuary of Devotion, Peace & Community");
 });
 
 const heroSubtitle = computed(() => {
@@ -135,13 +137,13 @@ useHead({
     class="about-page"
     :class="{ 'is-dark': isDarkMode }"
     :data-theme="isDarkMode ? 'dark' : undefined"
-    lang="en"
+    :lang="currentLocale"
   >
     <!-- 1. TITLE BAND (Hero) -->
     <AboutHero
       :title="heroTitle"
       :subtitle="heroSubtitle"
-      lang="en"
+      :lang="currentLocale"
       :is-dark="isDarkMode"
     />
 
@@ -157,7 +159,7 @@ useHead({
     >
       <AboutArticle
         :html="articleHtml"
-        locale="en"
+        :locale="currentLocale"
         :is-dark="isDarkMode"
       />
     </div>

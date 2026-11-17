@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+# task-brief - Extract a task's full text to a uniquely named file
+# Usage: task-brief PLAN_FILE N
+
+set -euo pipefail
+
+PLAN_FILE="${1:?PLAN_FILE required}"
+TASK_NUM="${2:?TASK_NUM required}"
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
+PLAN_BASENAME=$(basename "$PLAN_FILE" .md)
+WORKSPACE="$REPO_ROOT/.superpowers/sdd/$PLAN_BASENAME"
+BRIEF="$WORKSPACE/task-${TASK_NUM}-brief.md"
+
+# Extract the task section from the plan file
+awk "/^### Task ${TASK_NUM}:/,/^### Task/" "$PLAN_FILE" | head -n -1 > "$BRIEF"
+
+if [ ! -s "$BRIEF" ]; then
+  echo "Task $TASK_NUM not found in $PLAN_FILE" >&2
+  exit 1
+fi
+
+echo "$BRIEF"

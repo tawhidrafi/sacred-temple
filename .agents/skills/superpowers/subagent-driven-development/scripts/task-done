@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# task-done - Run tests and append completion line to ledger
+# Usage: task-done PLAN_FILE N BASE -- <test command>
+
+set -euo pipefail
+
+PLAN_FILE="${1:?PLAN_FILE required}"
+TASK_NUM="${2:?TASK_NUM required}"
+BASE="${3:?BASE required}"
+shift 3
+TEST_CMD="$*"
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
+PLAN_BASENAME=$(basename "$PLAN_FILE" .md)
+WORKSPACE="$REPO_ROOT/.superpowers/sdd/$PLAN_BASENAME"
+LEDGER="$WORKSPACE/progress.md"
+
+HEAD=$(git rev-parse HEAD 2>/dev/null || echo "")
+
+echo "Running: $TEST_CMD"
+eval "$TEST_CMD" > "$WORKSPACE/task-${TASK_NUM}-test-output.txt" 2>&1
+EXIT_CODE=$?
+
+cat "$WORKSPACE/task-${TASK_NUM}-test-output.txt"
+
+if [ $EXIT_CODE -ne 0 ]; then
+  echo "Task $TASK_NUM: tests FAILED (exit $EXIT_CODE)" >&2
+  echo "Task $TASK_NUM: NOT complete" >> "$LEDGER"
+  exit 1
+fi
+
+BASE7=${BASE:0:7}
+HEAD7=${HEAD:0:7}
+echo "Task $TASK_NUM: complete (commits $BASE7..$HEAD7, tests: $TEST_CMD → pass)" >> "$LEDGER"
+echo "Task $TASK_NUM: complete"

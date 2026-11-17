@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# task-start - Print the brief path and BASE for a task
+# Usage: task-start PLAN_FILE N
+
+set -euo pipefail
+
+PLAN_FILE="${1:?PLAN_FILE required}"
+TASK_NUM="${2:?TASK_NUM required}"
+
+REPO_ROOT=$(git rev-parse --show-toplevel 2>/dev/null || echo ".")
+PLAN_BASENAME=$(basename "$PLAN_FILE" .md)
+WORKSPACE="$REPO_ROOT/.superpowers/sdd/$PLAN_BASENAME"
+BRIEF="$WORKSPACE/task-${TASK_NUM}-brief.md"
+
+if [ ! -f "$BRIEF" ]; then
+  echo "Brief not found for task $TASK_NUM: $BRIEF" >&2
+  echo "Run task-brief first." >&2
+  exit 1
+fi
+
+BASE=$(git rev-parse HEAD 2>/dev/null || echo "")
+
+echo "Brief: $BRIEF"
+echo "BASE: $BASE"

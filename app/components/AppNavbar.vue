@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onBeforeUnmount, watch, nextTick } from "vue";
 import { useRoute } from "vue-router";
+import { useTranslation } from "~/composables/useTranslation";
 
 const route = useRoute();
+const { currentLocale, setLocale, t } = useTranslation();
 
 // Scroll state for transparent -> glass transition
 const isScrolled = ref(false);
@@ -96,16 +98,17 @@ const toggleTheme = (event?: MouseEvent) => {
   });
 };
 
-// Language state (visual toggle for later work)
-const currentLang = ref<string>("EN");
+// Language state backed by CMS translations composable
+const currentLang = computed(() => currentLocale.value.toUpperCase());
 const languages = [
-  { code: "EN", name: "English", nativeName: "English" },
-  { code: "BN", name: "Bengali", nativeName: "Bengali" },
+  { code: "EN", locale: "en" as const, name: "English", nativeName: "English" },
+  { code: "BN", locale: "bn" as const, name: "Bengali", nativeName: "বাংলা" },
 ];
 const isLangOpen = ref(false);
 
 const setLanguage = (code: string) => {
-  currentLang.value = code;
+  const target = code.toLowerCase() as "en" | "bn";
+  setLocale(target);
   isLangOpen.value = false;
 };
 
@@ -214,35 +217,35 @@ onBeforeUnmount(() => {
       <!-- 2. MIDDLE: Nav Links (Home, About, Deities, Puja [dropdown], Festivals, Gallery, Contact) -->
       <nav class="nav-middle" aria-label="Main Navigation">
         <NuxtLink to="/" class="nav-item" active-class="nav-item-active">
-          Home
+          {{ t('nav.home', 'Home') }}
         </NuxtLink>
 
         <NuxtLink to="/about" class="nav-item" active-class="nav-item-active">
-          About
+          {{ t('nav.about', 'About') }}
         </NuxtLink>
 
         <NuxtLink to="/deities" class="nav-item" active-class="nav-item-active">
-          Deities
+          {{ t('nav.deities', 'Deities') }}
         </NuxtLink>
 
         <NuxtLink to="/puja-and-rituals" class="nav-item" active-class="nav-item-active">
-          Puja &amp; Rituals
+          {{ t('nav.pujas', 'Puja & Rituals') }}
         </NuxtLink>
 
         <NuxtLink to="/booking-status" class="nav-item" active-class="nav-item-active">
-          Track Booking
+          {{ t('nav.track_booking', 'Track Booking') }}
         </NuxtLink>
 
         <NuxtLink to="/festivals-and-events" class="nav-item" active-class="nav-item-active">
-          Festivals
+          {{ t('nav.festivals', 'Festivals') }}
         </NuxtLink>
 
         <NuxtLink to="/gallery" class="nav-item" active-class="nav-item-active">
-          Gallery
+          {{ t('nav.gallery', 'Gallery') }}
         </NuxtLink>
 
         <NuxtLink to="/contact" class="nav-item" active-class="nav-item-active">
-          Contact
+          {{ t('nav.contact', 'Contact') }}
         </NuxtLink>
       </nav>
 
@@ -424,7 +427,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Home
+              {{ t('nav.home', 'Home') }}
             </NuxtLink>
 
             <NuxtLink
@@ -433,7 +436,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              About
+              {{ t('nav.about', 'About') }}
             </NuxtLink>
 
             <NuxtLink
@@ -442,7 +445,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Deities
+              {{ t('nav.deities', 'Deities') }}
             </NuxtLink>
 
             <NuxtLink
@@ -451,7 +454,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Puja &amp; Rituals
+              {{ t('nav.pujas', 'Puja & Rituals') }}
             </NuxtLink>
 
             <NuxtLink
@@ -460,7 +463,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Track Booking
+              {{ t('nav.track_booking', 'Track Booking') }}
             </NuxtLink>
 
             <NuxtLink
@@ -469,7 +472,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Festivals
+              {{ t('nav.festivals', 'Festivals') }}
             </NuxtLink>
 
             <NuxtLink
@@ -478,7 +481,7 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Gallery
+              {{ t('nav.gallery', 'Gallery') }}
             </NuxtLink>
 
             <NuxtLink
@@ -487,8 +490,31 @@ onBeforeUnmount(() => {
               active-class="mobile-nav-active"
               @click="isMobileMenuOpen = false"
             >
-              Contact
+              {{ t('nav.contact', 'Contact') }}
             </NuxtLink>
+
+            <!-- Mobile Language Selector Row -->
+            <div class="mobile-lang-row">
+              <span class="mobile-lang-label">Language / ভাষা:</span>
+              <div class="mobile-lang-btns">
+                <button
+                  type="button"
+                  class="mobile-lang-btn"
+                  :class="{ active: currentLang === 'EN' }"
+                  @click="setLanguage('EN')"
+                >
+                  English
+                </button>
+                <button
+                  type="button"
+                  class="mobile-lang-btn"
+                  :class="{ active: currentLang === 'BN' }"
+                  @click="setLanguage('BN')"
+                >
+                  বাংলা
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -1075,6 +1101,45 @@ onBeforeUnmount(() => {
 .fade-scale-leave-to {
   opacity: 0;
   transform: scale(0.95) translateY(-4px);
+}
+
+.mobile-lang-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 0.5rem 0.25rem;
+  margin-top: 0.5rem;
+  border-top: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.1));
+}
+
+.mobile-lang-label {
+  font-size: 0.82rem;
+  color: var(--text-muted, #94a3b8);
+  font-weight: 500;
+}
+
+.mobile-lang-btns {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.mobile-lang-btn {
+  background: var(--bg-surface, rgba(255, 255, 255, 0.08));
+  border: 1px solid var(--border-subtle, rgba(255, 255, 255, 0.15));
+  color: var(--text-base, #e2e8f0);
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.mobile-lang-btn.active {
+  background: var(--gold, #E0A526);
+  color: #1a0f0f;
+  font-weight: 700;
+  border-color: var(--gold, #E0A526);
 }
 
 .mobile-slide-enter-active,

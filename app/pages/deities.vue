@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, onUnmounted } from "vue";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t, currentLocale } = useTranslation();
 
 interface DeityDisplayItem {
   id: number | string;
@@ -90,18 +93,28 @@ const resolveStaticDeityImage = (slug?: string, name?: string, explicitImage?: s
 
 // Map and normalize server data with fallback
 const displayedDeities = computed<DeityDisplayItem[]>(() => {
+  const isBn = currentLocale.value === "bn";
   const items = serverResponse.value?.items;
   if (Array.isArray(items) && items.length > 0) {
     return items
       .filter((item) => item.active !== false)
       .map((item) => {
-        const deityName = typeof item.name === "object" ? item.name?.en || item.name?.bn || "Sacred Deity" : item.name || "Sacred Deity";
+        const deityName = typeof item.name === "object"
+          ? (isBn ? (item.name?.bn || item.name?.en) : (item.name?.en || item.name?.bn)) || "Sacred Deity"
+          : item.name || "Sacred Deity";
+        const deitySub = typeof item.subtitle === "object"
+          ? (isBn ? (item.subtitle?.bn || item.subtitle?.en) : (item.subtitle?.en || item.subtitle?.bn)) || ""
+          : item.subtitle || "";
+        const deityDesc = typeof item.description === "object"
+          ? (isBn ? (item.description?.bn || item.description?.en) : (item.description?.en || item.description?.bn)) || ""
+          : item.description || "";
+
         return {
           id: item.id || item.slug,
           slug: item.slug || "",
           name: deityName,
-          subtitle: typeof item.subtitle === "object" ? item.subtitle?.en || item.subtitle?.bn || "" : item.subtitle || "",
-          description: typeof item.description === "object" ? item.description?.en || item.description?.bn || "" : item.description || "",
+          subtitle: deitySub,
+          description: deityDesc,
           image: resolveStaticDeityImage(item.slug, deityName, item.imageId || item.image),
           sortOrder: item.sortOrder ?? 0,
         };
@@ -162,15 +175,14 @@ useHead({
 </script>
 
 <template>
-  <div class="deities-page" lang="en">
+  <div class="deities-page" :lang="currentLocale">
     <!-- 1. HERO HEADER SECTION -->
     <header class="deities-hero">
       <div class="hero-inner">
-        <span class="hero-badge">Sacred Sanctum &amp; Shrines</span>
-        <h1 class="hero-title">The Sacred Deities</h1>
+        <span class="hero-badge">{{ t('deities.hero_badge', 'Sacred Sanctum & Shrines') }}</span>
+        <h1 class="hero-title">{{ t('deities.hero_title', 'The Sacred Deities') }}</h1>
         <p class="hero-subtitle">
-          The consecrated deities and eternal shrines of Golpahar Mohashoshan Kali Mandir,
-          established across generations to bestow peace, divine protection, and spiritual solace upon all devotees.
+          {{ t('deities.hero_subtitle', 'The consecrated deities and eternal shrines of Golpahar Mohashoshan Kali Mandir, established across generations to bestow peace, divine protection, and spiritual solace upon all devotees.') }}
         </p>
         <div class="hero-divider" aria-hidden="true"></div>
       </div>
@@ -181,7 +193,7 @@ useHead({
       <!-- Loading Skeleton -->
       <div v-if="status === 'pending' && displayedDeities.length === 0" class="loading-state">
         <div class="spinner" aria-hidden="true"></div>
-        <p>Loading sanctum darshan...</p>
+        <p>{{ t('common.loading', 'Loading sanctum darshan...') }}</p>
       </div>
 
       <!-- Deities Grid -->
@@ -201,7 +213,7 @@ useHead({
               onerror="this.src='/images/deities/kali.jpg'"
             />
             <div class="media-overlay">
-              <span class="view-darshan-badge">View Darshan</span>
+              <span class="view-darshan-badge">{{ t('common.view_darshan', 'View Darshan') }}</span>
             </div>
           </div>
 
@@ -224,7 +236,7 @@ useHead({
                 @click="openDarshan(deity)"
                 :aria-label="`Open sacred darshan for ${deity.name}`"
               >
-                Quick Overview
+                {{ t('common.quick_overview', 'Quick Overview') }}
               </button>
             </div>
           </div>
@@ -274,7 +286,7 @@ useHead({
                   class="btn-primary-action"
                   @click="closeDarshan"
                 >
-                  Book Puja Offering
+                  {{ t('common.book_puja', 'Book Puja Offering') }}
                 </NuxtLink>
               </div>
             </div>

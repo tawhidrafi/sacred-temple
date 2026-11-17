@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, reactive, computed } from "vue";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t, currentLocale } = useTranslation();
 
 useHead({
   title: "Contact Us & Devotee Desk",
@@ -177,7 +180,7 @@ const handleReset = () => {
 </script>
 
 <template>
-  <div class="contact-page">
+  <div class="contact-page" :lang="currentLocale">
     <!-- Breadcrumb Bar -->
 
     <!-- Hero Header -->
@@ -185,30 +188,29 @@ const handleReset = () => {
       <div class="contact-container hero-inner">
         <div class="hero-badge">
           <span class="badge-dot" aria-hidden="true"></span>
-          <span>Pilgrim Helpline &amp; Office Desk</span>
+          <span>{{ t('contact.hero_badge', 'Pilgrim Helpline & Office Desk') }}</span>
         </div>
 
         <h1 class="hero-title">
-          <span class="english-title">Contact Mandir Office</span>
+          <span class="english-title">{{ t('contact.hero_title', 'Contact Mandir Office') }}</span>
         </h1>
 
         <p class="hero-subtitle">
-          Welcome to Golpahar Mohashoshan Kali Mandir. Whether you are planning a pilgrim visit,
-          arranging a special puja offering, or seeking temple trust guidance, our office desk is here to assist.
+          {{ t('contact.hero_subtitle', 'Welcome to Golpahar Mohashoshan Kali Mandir. Whether you are planning a pilgrim visit, arranging a special puja offering, or seeking temple trust guidance, our office desk is here to assist.') }}
         </p>
 
         <div class="hero-quick-status">
           <div class="status-item">
             <span class="status-indicator"></span>
-            <span>Mandir Open Daily</span>
+            <span>{{ t('contact.open_daily', 'Mandir Open Daily') }}</span>
           </div>
           <div class="status-divider" aria-hidden="true">·</div>
           <div class="status-item">
-            <span>Morning 05:00 AM – 12:30 PM</span>
+            <span>{{ t('contact.morning_hours', 'Morning 05:00 AM – 12:30 PM') }}</span>
           </div>
           <div class="status-divider" aria-hidden="true">·</div>
           <div class="status-item">
-            <span>Evening 04:30 PM – 09:30 PM</span>
+            <span>{{ t('contact.evening_hours', 'Evening 04:30 PM – 09:30 PM') }}</span>
           </div>
         </div>
 

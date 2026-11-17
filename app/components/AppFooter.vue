@@ -1,19 +1,23 @@
 <script setup lang="ts">
+import { computed } from "vue";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t } = useTranslation();
 const currentYear = new Date().getFullYear();
 
 // Menu items
-const menuLinks = [
-  { name: "Home", path: "/" },
-  { name: "About", path: "/about" },
-  { name: "Deities", path: "/deities" },
-  { name: "Puja & Rituals", path: "/puja-and-rituals" },
-  { name: "Track Booking", path: "/booking-status" },
-  { name: "Puja List & Charges", path: "/puja-list-and-charges" },
-  { name: "Festivals", path: "/festivals-and-events" },
-  { name: "Gallery", path: "/gallery" },
-  { name: "Contact", path: "/contact" },
+const menuLinks = computed(() => [
+  { name: t("nav.home", "Home"), path: "/" },
+  { name: t("nav.about", "About"), path: "/about" },
+  { name: t("nav.deities", "Deities"), path: "/deities" },
+  { name: t("nav.pujas", "Puja & Rituals"), path: "/puja-and-rituals" },
+  { name: t("nav.track_booking", "Track Booking"), path: "/booking-status" },
+  { name: t("puja.puja_list_link", "Puja List & Charges"), path: "/puja-list-and-charges" },
+  { name: t("nav.festivals", "Festivals"), path: "/festivals-and-events" },
+  { name: t("nav.gallery", "Gallery"), path: "/gallery" },
+  { name: t("nav.contact", "Contact"), path: "/contact" },
   { name: "Sitemap", path: "/sitemap" },
-];
+]);
 
 const scrollToTop = () => {
   if (typeof window !== "undefined") {
@@ -36,7 +40,7 @@ const scrollToTop = () => {
           </NuxtLink>
 
           <p class="footer-desc">
-            An abode of eternal devotion, Vedic rites, and inner peace. Serving pilgrims and community through daily divine darshan, wholesome Annadanam, and timeless sacred heritage.
+            {{ t('footer.description', 'An abode of eternal devotion, Vedic rites, and inner peace. Serving pilgrims and community through daily divine darshan, wholesome Annadanam, and timeless sacred heritage.') }}
           </p>
 
           <!-- Social Media Buttons -->
@@ -87,7 +91,7 @@ const scrollToTop = () => {
 
         <!-- COLUMN 2: Menu Items -->
         <div class="footer-col menu-col">
-          <h3 class="col-heading">Navigation</h3>
+          <h3 class="col-heading">{{ t('footer.navigation', 'Navigation') }}</h3>
           <ul class="footer-menu">
             <li v-for="link in menuLinks" :key="link.path" class="menu-item">
               <NuxtLink :to="link.path" class="footer-link">
@@ -99,7 +103,7 @@ const scrollToTop = () => {
 
         <!-- COLUMN 3: Contact & Location -->
         <div class="footer-col contact-col">
-          <h3 class="col-heading">Contact &amp; Location</h3>
+          <h3 class="col-heading">{{ t('footer.location', 'Contact & Location') }}</h3>
 
           <div class="contact-entries">
             <!-- Address -->
@@ -149,7 +153,7 @@ const scrollToTop = () => {
       <!-- Bottom Bar -->
       <div class="footer-bottom">
         <p class="copyright-text">
-          &copy; {{ currentYear }} Golpahar Mohashoshan Kali Mandir Trust. All rights reserved. &bull;
+          {{ t('footer.copyright', `© ${currentYear} Golpahar Mohashoshan Kali Mandir Committee. All rights reserved.`) }} &bull;
           <NuxtLink to="/sitemap" class="footer-sitemap-link">Sitemap</NuxtLink>
         </p>
 

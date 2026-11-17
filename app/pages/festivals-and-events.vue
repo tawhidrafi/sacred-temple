@@ -1,5 +1,8 @@
 <script setup lang="ts">
 import { ref, computed } from "vue";
+import { useTranslation } from "~/composables/useTranslation";
+
+const { t, currentLocale } = useTranslation();
 
 interface EventDisplayItem {
   id: number | string;
@@ -119,6 +122,7 @@ const todayIso = new Date().toISOString().slice(0, 10);
 
 // Normalize and map items
 const allEvents = computed<EventDisplayItem[]>(() => {
+  const isBn = currentLocale.value === "bn";
   const items = eventsResponse.value?.items;
   if (Array.isArray(items) && items.length > 0) {
     return items
@@ -128,10 +132,16 @@ const allEvents = computed<EventDisplayItem[]>(() => {
         slug: e.slug || "",
         date: e.date || "",
         kind: e.kind || "festival",
-        title: typeof e.title === "object" ? e.title?.en || e.title?.bn || "Sacred Event" : e.title || "Sacred Event",
-        label: typeof e.label === "object" ? e.label?.en || e.label?.bn || "" : e.label || "",
+        title: typeof e.title === "object"
+          ? (isBn ? (e.title?.bn || e.title?.en) : (e.title?.en || e.title?.bn)) || "Sacred Event"
+          : e.title || "Sacred Event",
+        label: typeof e.label === "object"
+          ? (isBn ? (e.label?.bn || e.label?.en) : (e.label?.en || e.label?.bn)) || ""
+          : e.label || "",
         time: e.time || "",
-        description: typeof e.description === "object" ? e.description?.en || e.description?.bn || "" : e.description || "",
+        description: typeof e.description === "object"
+          ? (isBn ? (e.description?.bn || e.description?.en) : (e.description?.en || e.description?.bn)) || ""
+          : e.description || "",
       }));
   }
   return defaultEvents;
@@ -196,15 +206,14 @@ useHead({
 </script>
 
 <template>
-  <div class="events-page" lang="en">
+  <div class="events-page" :lang="currentLocale">
     <!-- 1. HERO HEADER -->
     <header class="page-hero">
       <div class="hero-inner">
-        <span class="hero-badge">Sacred Calendar &amp; Celebrations</span>
-        <h1 class="hero-title">Festivals &amp; Sacred Events</h1>
+        <span class="hero-badge">{{ t('events.hero_badge', 'Sacred Calendar & Celebrations') }}</span>
+        <h1 class="hero-title">{{ t('events.hero_title', 'Festivals & Sacred Events') }}</h1>
         <p class="hero-subtitle">
-          Annual celebrations, holy vrata observances, and sacred tithis celebrated with traditional joy
-          and devotional solemnity at Golpahar Mohashoshan Kali Mandir.
+          {{ t('events.hero_subtitle', 'Annual celebrations, holy vrata observances, and sacred tithis celebrated with traditional joy and devotional solemnity at Golpahar Mohashoshan Kali Mandir.') }}
         </p>
         <div class="hero-divider" aria-hidden="true"></div>
       </div>
@@ -219,7 +228,7 @@ useHead({
           :class="{ 'tab-active': activeFilter === 'all' }"
           @click="activeFilter = 'all'"
         >
-          All Events ({{ allEvents.length }})
+          {{ t('events.filter_all', 'All Sacred Events') }} ({{ allEvents.length }})
         </button>
         <button
           type="button"
@@ -227,7 +236,7 @@ useHead({
           :class="{ 'tab-active': activeFilter === 'upcoming' }"
           @click="activeFilter = 'upcoming'"
         >
-          Upcoming
+          {{ t('events.filter_upcoming', 'Upcoming Dates') }}
         </button>
         <button
           type="button"
@@ -235,7 +244,7 @@ useHead({
           :class="{ 'tab-active': activeFilter === 'festival' }"
           @click="activeFilter = 'festival'"
         >
-          Major Festivals
+          {{ t('events.filter_festivals', 'Major Festivals') }}
         </button>
       </div>
 
