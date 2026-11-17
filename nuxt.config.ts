@@ -6,6 +6,7 @@ export default defineNuxtConfig({
   routeRules: {
     "/admin/**": { ssr: false },
     "/account/**": { ssr: false },
+    "/user/**": { ssr: false },
     // Edge SWR caching for public content APIs (60s stale-while-revalidate)
     "/api/public/bookings/**": { cache: false },
     "/api/public/**": { swr: 60 },

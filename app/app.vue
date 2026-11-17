@@ -6,6 +6,16 @@ import AppFooter from "./components/AppFooter.vue";
 
 const route = useRoute();
 const isAdminRoute = computed(() => route.path.startsWith("/admin"));
+const isPortalOrAuthRoute = computed(() => {
+  return (
+    route.path.startsWith("/admin") ||
+    route.path.startsWith("/user") ||
+    route.path === "/login" ||
+    route.path === "/register" ||
+    route.path === "/forgot-password" ||
+    route.path === "/reset-password"
+  );
+});
 
 useHead({
   titleTemplate: (titleChunk) => {
@@ -42,16 +52,16 @@ useHead({
 </script>
 
 <template>
-  <div class="app-layout" :class="{ 'is-admin-route': isAdminRoute }">
-    <!-- Top public navigation bar (hidden on admin routes) -->
-    <AppNavbar v-if="!isAdminRoute" />
+  <div class="app-layout" :class="{ 'is-admin-route': isAdminRoute, 'is-portal-route': isPortalOrAuthRoute }">
+    <!-- Top public navigation bar (hidden on admin and portal/auth routes) -->
+    <AppNavbar v-if="!isPortalOrAuthRoute" />
 
-    <main class="app-main" :class="{ 'admin-main': isAdminRoute }">
+    <main class="app-main" :class="{ 'admin-main': isAdminRoute, 'portal-main': isPortalOrAuthRoute }">
       <NuxtPage />
     </main>
 
-    <!-- Site Footer (hidden on admin routes) -->
-    <AppFooter v-if="!isAdminRoute" />
+    <!-- Site Footer (hidden on admin and portal/auth routes) -->
+    <AppFooter v-if="!isPortalOrAuthRoute" />
   </div>
 </template>
 
