@@ -13,13 +13,5 @@ export * from "./volunteers";
 export * from "./media";
 export * from "./audit";
 export * from "./visitations";
-
-
-
-
-
-
-
-
-
-
+export * from "./user-profiles";
+export * from "./donations";
