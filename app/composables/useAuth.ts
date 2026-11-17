@@ -36,13 +36,28 @@ export const useAuth = () => {
   const isUser = computed(() => role.value === "user");
 
   const login = async (
-    email: string,
+    identifier: string,
     pass: string,
     rememberMe = true
   ): Promise<{ success: boolean; error?: string; role?: Role }> => {
     try {
+      let emailToUse = identifier.trim().toLowerCase();
+      if (!emailToUse.includes("@")) {
+        try {
+          const res = await $fetch<{ email: string }>("/api/auth/resolve-identifier", {
+            method: "POST",
+            body: { identifier: identifier.trim() },
+          });
+          if (res?.email) {
+            emailToUse = res.email.toLowerCase();
+          }
+        } catch {
+          // fallback to identifier
+        }
+      }
+
       const { data, error } = await authClient.signIn.email({
-        email: email.trim().toLowerCase(),
+        email: emailToUse,
         password: pass.trim(),
         rememberMe,
       });
@@ -64,7 +79,7 @@ export const useAuth = () => {
     }
   };
 
-  const logout = async (redirectTo = "/admin/login") => {
+  const logout = async (redirectTo = "/login") => {
     try {
       await authClient.signOut();
     } catch {

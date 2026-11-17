@@ -32,7 +32,7 @@ watchEffect(() => {
   if (!isAuthenticated.value) {
     navigateTo("/admin/login");
   } else if (!isStaff.value) {
-    navigateTo("/account");
+    navigateTo("/user/dashboard");
   }
 });
 
@@ -2079,7 +2079,7 @@ const executeDeleteEvent = async () => {
           </div>
         </div>
 
-        <button type="button" class="btn-logout" @click="() => logout()" title="Sign out of console">
+        <button type="button" class="btn-logout" @click="() => logout('/admin/login')" title="Sign out of console">
           <span>Sign Out</span>
         </button>
       </div>

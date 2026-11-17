@@ -11,7 +11,7 @@ watchEffect(() => {
     if (isStaff.value) {
       navigateTo("/admin/dashboard");
     } else {
-      navigateTo("/account");
+      navigateTo("/user/dashboard");
     }
   } else {
     navigateTo("/admin/login");

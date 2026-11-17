@@ -9,14 +9,19 @@ useHead({
 
 const route = useRoute();
 const router = useRouter();
-const { isAuthenticated, isPending, login } = useAuth();
+const { isAuthenticated, isPending, isStaff, login } = useAuth();
 
 // Redirect if already authenticated
 watchEffect(() => {
   if (isPending.value) return;
   if (isAuthenticated.value) {
-    const redirect = (route.query.redirect as string) || "/user/dashboard";
-    router.replace(redirect);
+    if (isStaff.value) {
+      const redirect = (route.query.redirect as string) || "/admin/dashboard";
+      router.replace(redirect);
+    } else {
+      const redirect = (route.query.redirect as string) || "/user/dashboard";
+      router.replace(redirect);
+    }
   }
 });
 
@@ -42,8 +47,13 @@ const handleLogin = async () => {
     // If user provided a phone number, standard better-auth uses email; allow identifier
     const res = await login(identifier, pass, rememberMe.value);
     if (res.success) {
-      const redirect = (route.query.redirect as string) || "/user/dashboard";
-      await router.replace(redirect);
+      if (res.role === "admin" || res.role === "editor") {
+        const redirect = (route.query.redirect as string) || "/admin/dashboard";
+        await router.replace(redirect);
+      } else {
+        const redirect = (route.query.redirect as string) || "/user/dashboard";
+        await router.replace(redirect);
+      }
     } else {
       errorMessage.value = res.error || "Invalid credentials. Please verify your email and password.";
     }

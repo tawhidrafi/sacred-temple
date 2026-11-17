@@ -17,7 +17,7 @@ watchEffect(() => {
     if (isStaff.value) {
       navigateTo("/admin/dashboard");
     } else if (isUser.value) {
-      navigateTo("/account");
+      navigateTo("/user/dashboard");
     }
   }
 });
@@ -43,7 +43,7 @@ const handleLogin = async () => {
       if (res.role === "admin" || res.role === "editor") {
         await navigateTo("/admin/dashboard");
       } else {
-        await navigateTo("/account");
+        await navigateTo("/user/dashboard");
       }
     } else {
       errorMessage.value = res.error || "Authentication failed. Please verify credentials.";
