@@ -56,11 +56,11 @@ export function getAuth(event: H3Event) {
     },
     hooks: {
       before: createAuthMiddleware(async (ctx) => {
-        // Enforce signup gate: ALLOW_PUBLIC_SIGNUP
+        // Enforce signup gate: ALLOW_PUBLIC_SIGNUP (blocks only if explicitly disabled)
         if (ctx.path === "/sign-up/email") {
           const allowSignup =
-            process.env.ALLOW_PUBLIC_SIGNUP === "true" ||
-            cfEnv.ALLOW_PUBLIC_SIGNUP === "true";
+            process.env.ALLOW_PUBLIC_SIGNUP !== "false" &&
+            cfEnv.ALLOW_PUBLIC_SIGNUP !== "false";
 
           if (!allowSignup) {
             throw new APIError("FORBIDDEN", {
