@@ -188,4 +188,24 @@ export const defaultTranslations: SiteTranslations = {
     category: "status",
     label: "Status Lookup Hint",
   },
+
+  // --- Donation Page ---
+  "donation.hero_badge": {
+    en: "Pious Seva & Devotional Giving",
+    bn: "পুণ্য সেবা ও ভক্তিমূলক দান",
+    category: "common",
+    label: "Donation Hero Badge",
+  },
+  "donation.hero_title": {
+    en: "Annadanam, Bhog & Temple Seva",
+    bn: "অন্নদান, ভোগরাগ ও মন্দির সেবা",
+    category: "common",
+    label: "Donation Hero Title",
+  },
+  "donation.hero_subtitle": {
+    en: "Participate in sacred Sanatan seva, feed visiting pilgrims through daily Annadanam, and preserve the eternal sanctity of Golpahar Mohashoshan Kali Mandir.",
+    bn: "পবিত্র সনাতন সেবায় অংশ নিন, নিত্য অন্নদানের মাধ্যমে ভক্তদের সেবায় সহায়তা করুন এবং শ্রী শ্রী গোলপাহাড় মহাশ্মশান কালী মন্দিরের ঐতিহ্য সংরক্ষণে অবদান রাখুন।",
+    category: "common",
+    label: "Donation Hero Subtitle",
+  },
 };

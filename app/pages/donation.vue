@@ -42,43 +42,13 @@ const templeEmail = computed(
 const templeAddress = computed(
   () => siteSettings.value?.contact?.address || "Golpahar, Mehedibag Road, Chittagong, Bangladesh"
 );
-
-const sevaOfferings = [
-  {
-    id: "annadanam",
-    title: "Daily Annadanam Seva",
-    subtitle: "Sacred Food Distribution",
-    description:
-      "Annadanam is revered as the highest form of charity in Vedic tradition. Sponsor sanctified khichuri and mahaprasad meals for visiting devotees, pilgrims, and the needy.",
-    suggestedAmounts: ["BDT 1,001", "BDT 2,501", "BDT 5,001", "BDT 11,001"],
-    tag: "High Merit Seva",
-  },
-  {
-    id: "nitya-bhog",
-    title: "Nitya Bhog & Aarti Seva",
-    subtitle: "Daily Divine Offerings",
-    description:
-      "Support the daily sanctum rituals, pure cow ghee for lamps, sacred hibiscus garlands, bel leaves, incense, and fresh fruits offered at the lotus feet of Maa Bhavatarini.",
-    suggestedAmounts: ["BDT 501", "BDT 1,001", "BDT 2,001", "BDT 5,001"],
-    tag: "Daily Worship",
-  },
-  {
-    id: "preservation",
-    title: "Temple Heritage & Renovation",
-    subtitle: "Infrastructure & Sanctum Preservation",
-    description:
-      "Contribute towards ongoing architectural upkeep, pilgrim shelter pavilions, lighting, cleanliness, and long-term preservation of our historic 130+ year hilltop holy sanctuary.",
-    suggestedAmounts: ["BDT 2,501", "BDT 5,001", "BDT 10,001", "BDT 25,001"],
-    tag: "Sanctuary Trust",
-  },
-];
 </script>
 
 <template>
-  <div class="donation-page-wrapper" :lang="currentLocale">
-    <!-- 1. HERO SECTION -->
-    <header class="donation-hero">
-      <div class="hero-content">
+  <div class="donation-page" :lang="currentLocale">
+    <!-- 1. HERO HEADER (Matches Deities, Puja, and Contact pages) -->
+    <header class="page-hero">
+      <div class="hero-inner">
         <span class="hero-badge">
           {{ t('donation.hero_badge', 'Pious Seva & Devotional Giving') }}
         </span>
@@ -97,57 +67,8 @@ const sevaOfferings = [
       </div>
     </header>
 
-    <main class="donation-container">
-      <!-- 2. SEVA PILLARS GRID -->
-      <section class="seva-pillars-section" aria-label="Sacred Seva Opportunities">
-        <div class="section-heading-wrap">
-          <span class="section-tag">{{ t('donation.seva_tag', 'SACRED OPPORTUNITIES') }}</span>
-          <h2 class="section-title">{{ t('donation.seva_title', 'Choose Your Devotional Seva') }}</h2>
-          <p class="section-desc">
-            All offerings made to the Mandir are utilized strictly under the supervision of the Executive Committee for pilgrim welfare and religious ceremonies.
-          </p>
-        </div>
-
-        <div class="seva-grid">
-          <article
-            v-for="seva in sevaOfferings"
-            :key="seva.id"
-            class="seva-card"
-          >
-            <div class="seva-card-header">
-              <span class="seva-tag-chip">{{ seva.tag }}</span>
-              <h3 class="seva-title">{{ seva.title }}</h3>
-              <p class="seva-subtitle">{{ seva.subtitle }}</p>
-            </div>
-
-            <p class="seva-desc">{{ seva.description }}</p>
-
-            <div class="suggested-amounts-wrap">
-              <span class="amounts-label">Suggested Contributions:</span>
-              <div class="amounts-pills">
-                <span
-                  v-for="amt in seva.suggestedAmounts"
-                  :key="amt"
-                  class="amount-pill"
-                >
-                  {{ amt }}
-                </span>
-              </div>
-            </div>
-
-            <div class="seva-card-actions">
-              <NuxtLink
-                :to="{ path: '/contact', query: { subject: seva.title } }"
-                class="btn-contribute"
-              >
-                Inquire &amp; Sponsor Seva &rarr;
-              </NuxtLink>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <!-- 3. CONTRIBUTION CHANNELS & BANK INFORMATION -->
+    <main class="page-container">
+      <!-- 2. CONTRIBUTION CHANNELS & BANK INFORMATION -->
       <section class="channels-section" aria-label="Official Contribution Methods">
         <div class="channels-card">
           <div class="channels-header">
@@ -160,7 +81,7 @@ const sevaOfferings = [
           <div class="channels-grid">
             <!-- Bank Transfer Details -->
             <div class="channel-col">
-              <div class="channel-icon-wrap">
+              <div class="channel-icon-wrap" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="channel-svg">
                   <path d="M3 21h18M3 10h18M5 6l7-3 7 3M4 10v11M20 10v11M8 14v4M12 14v4M16 14v4" />
                 </svg>
@@ -192,7 +113,7 @@ const sevaOfferings = [
 
             <!-- Mobile Banking Details -->
             <div class="channel-col">
-              <div class="channel-icon-wrap">
+              <div class="channel-icon-wrap" aria-hidden="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="channel-svg">
                   <rect x="5" y="2" width="14" height="20" rx="2" ry="2" />
                   <line x1="12" y1="18" x2="12.01" y2="18" />
@@ -219,21 +140,6 @@ const sevaOfferings = [
               </div>
             </div>
           </div>
-
-          <!-- Notice & Helpline Banner -->
-          <div class="trust-notice-box">
-            <div class="notice-text">
-              <strong>Devotee Advisory:</strong> For sankalpa reading, gotra dedication during Annadanam, or booking individual Vedic rituals, please connect with the devotee desk or register a puja online.
-            </div>
-            <div class="notice-actions">
-              <NuxtLink to="/contact?subject=Donation+%26+Trust+Inquiries" class="btn-notice-contact">
-                Devotee Desk Inquiry &rarr;
-              </NuxtLink>
-              <NuxtLink to="/puja-booking" class="btn-notice-puja">
-                Book a Sacred Puja
-              </NuxtLink>
-            </div>
-          </div>
         </div>
       </section>
     </main>
@@ -241,279 +147,159 @@ const sevaOfferings = [
 </template>
 
 <style scoped>
-.donation-page-wrapper {
-  min-height: 100vh;
-  background-color: var(--bg-primary, #F7EFE0);
-  color: var(--text-primary, #2B1A17);
+/* ----------------------------------------------------
+   DONATION & SEVA PAGE STYLING
+   Follows core palette & minimal typography.
+   ---------------------------------------------------- */
+.donation-page {
+  width: 100%;
+  min-height: 85vh;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  padding-top: calc(var(--nav-height, 72px) + 2rem);
   padding-bottom: 5rem;
 }
 
-/* Hero Section */
-.donation-hero {
-  padding: 4.5rem 1.5rem 3.5rem;
+/* ====================================================
+   1. HERO HEADER
+   ==================================================== */
+.page-hero {
+  padding: 2.5rem 1.5rem 2rem;
   text-align: center;
-  background: radial-gradient(circle at 50% 20%, rgba(224, 165, 38, 0.12) 0%, transparent 70%);
 }
 
-.hero-content {
-  max-width: 820px;
+.hero-inner {
+  max-width: 780px;
   margin: 0 auto;
 }
 
 .hero-badge {
   display: inline-block;
+  padding: 0.35rem 0.9rem;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--accent, #6E0516);
-  background: rgba(110, 5, 22, 0.08);
-  border: 1px solid rgba(110, 5, 22, 0.2);
-  padding: 0.3rem 0.85rem;
+  color: var(--accent-text);
+  background-color: rgba(110, 5, 22, 0.05);
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+html[data-theme="dark"] .hero-badge,
+html.dark .hero-badge {
+  background-color: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.25);
+  color: var(--accent);
 }
 
 .hero-title {
-  font-family: var(--font-heading, "Cinzel", serif);
-  font-size: clamp(2rem, 4vw, 2.85rem);
+  font-family: var(--font-serif);
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
   font-weight: 700;
-  color: var(--accent, #6E0516);
-  margin: 0 0 1rem;
+  line-height: 1.15;
   letter-spacing: -0.015em;
-  line-height: 1.2;
+  color: var(--heading-color);
+  margin: 0 0 1rem;
 }
 
 .hero-subtitle {
-  font-size: clamp(1rem, 1.8vw, 1.15rem);
-  color: var(--text-secondary, #475569);
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
   line-height: 1.65;
-  margin: 0 auto 1.5rem;
-  max-width: 680px;
+  color: var(--text-secondary);
+  margin: 0 auto;
+  max-width: 650px;
 }
 
 .hero-divider {
-  width: 64px;
-  height: 3px;
-  background-color: var(--accent, #6E0516);
+  width: 56px;
+  height: 2px;
+  background: var(--accent);
+  margin: 2rem auto 0;
+  opacity: 0.75;
+}
+
+/* ====================================================
+   2. MAIN CONTAINER & CHANNELS CARD
+   ==================================================== */
+.page-container {
+  max-width: 1040px;
   margin: 0 auto;
-  border-radius: 2px;
+  padding: 1.5rem 1.5rem 0;
 }
 
-/* Page Container */
-.donation-container {
-  max-width: 1160px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
+.channels-section {
+  margin-bottom: 2rem;
 }
 
-/* Section Heading */
-.section-heading-wrap {
-  text-align: center;
-  max-width: 650px;
-  margin: 0 auto 2.5rem;
-}
-
-.section-tag {
-  font-size: 0.725rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  color: var(--accent, #6E0516);
-  display: block;
-  margin-bottom: 0.35rem;
-}
-
-.section-title {
-  font-family: var(--font-heading, "Cinzel", serif);
-  font-size: 1.85rem;
-  font-weight: 700;
-  color: var(--text-primary, #2B1A17);
-  margin: 0 0 0.5rem;
-}
-
-.section-desc {
-  font-size: 0.925rem;
-  color: var(--text-secondary, #475569);
-  line-height: 1.55;
-  margin: 0;
-}
-
-/* Seva Grid */
-.seva-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(310px, 1fr));
-  gap: 1.5rem;
-  margin-bottom: 4rem;
-}
-
-.seva-card {
-  background: var(--bg-surface, #ffffff);
-  border: 1px solid rgba(224, 165, 38, 0.35);
-  border-radius: 12px;
-  padding: 1.75rem;
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
-}
-
-.seva-card:hover {
-  transform: translateY(-3px);
-  border-color: var(--accent, #6E0516);
-  box-shadow: 0 8px 20px rgba(110, 5, 22, 0.1);
-}
-
-.seva-card-header {
-  margin-bottom: 1rem;
-}
-
-.seva-tag-chip {
-  font-size: 0.675rem;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #b45309;
-  background: #fef3c7;
-  border: 1px solid #fde68a;
-  padding: 0.15rem 0.5rem;
-  border-radius: 9999px;
-  display: inline-block;
-  margin-bottom: 0.5rem;
-}
-
-.seva-title {
-  font-family: var(--font-heading, "Cinzel", serif);
-  font-size: 1.25rem;
-  font-weight: 700;
-  color: var(--accent, #6E0516);
-  margin: 0 0 0.25rem;
-}
-
-.seva-subtitle {
-  font-size: 0.825rem;
-  color: var(--text-secondary, #6B7280);
-  margin: 0;
-  font-weight: 600;
-}
-
-.seva-desc {
-  font-size: 0.9rem;
-  line-height: 1.6;
-  color: var(--text-primary, #2B1A17);
-  margin: 0 0 1.25rem;
-  flex: 1;
-}
-
-.suggested-amounts-wrap {
-  background: var(--bg-primary, #F7EFE0);
-  border-radius: 8px;
-  padding: 0.85rem 1rem;
-  margin-bottom: 1.35rem;
-}
-
-.amounts-label {
-  display: block;
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: var(--text-secondary, #475569);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  margin-bottom: 0.45rem;
-}
-
-.amounts-pills {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.35rem;
-}
-
-.amount-pill {
-  font-size: 0.8rem;
-  font-weight: 700;
-  font-family: monospace;
-  background: #ffffff;
-  border: 1px solid rgba(224, 165, 38, 0.5);
-  color: var(--accent, #6E0516);
-  padding: 0.2rem 0.55rem;
-  border-radius: 4px;
-}
-
-.btn-contribute {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  padding: 0.75rem 1.25rem;
-  border-radius: 8px;
-  background: var(--accent, #6E0516);
-  color: #ffffff;
-  font-size: 0.9rem;
-  font-weight: 600;
-  text-decoration: none;
-  transition: background-color 0.15s ease;
-  min-height: 44px;
-}
-
-.btn-contribute:hover {
-  background: var(--accent-hover, #4A020E);
-}
-
-/* Contribution Channels Card */
 .channels-card {
-  background: #ffffff;
-  border: 1.5px solid rgba(224, 165, 38, 0.4);
-  border-radius: 14px;
-  padding: 2.25rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 2.5rem;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.04);
+}
+
+html[data-theme="dark"] .channels-card,
+html.dark .channels-card {
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.35);
 }
 
 .channels-header {
   text-align: center;
-  max-width: 720px;
-  margin: 0 auto 2.25rem;
+  max-width: 680px;
+  margin: 0 auto 2.5rem;
 }
 
 .channels-title {
-  font-family: var(--font-heading, "Cinzel", serif);
-  font-size: 1.75rem;
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 2.4vw, 1.85rem);
   font-weight: 700;
-  color: var(--accent, #6E0516);
-  margin: 0 0 0.5rem;
+  color: var(--heading-color);
+  margin: 0 0 0.6rem;
+  line-height: 1.25;
 }
 
 .channels-subtitle {
-  font-size: 0.925rem;
-  color: var(--text-secondary, #475569);
-  line-height: 1.55;
+  font-size: 0.95rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
   margin: 0;
 }
 
 .channels-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: 1.75rem;
   margin-bottom: 2rem;
 }
 
 .channel-col {
-  background: var(--bg-primary, #F7EFE0);
-  border: 1px solid rgba(224, 165, 38, 0.35);
-  border-radius: 10px;
-  padding: 1.5rem;
+  background-color: var(--bg-primary);
+  border: 1px solid var(--border-subtle);
+  border-radius: 12px;
+  padding: 1.75rem;
+  display: flex;
+  flex-direction: column;
 }
 
 .channel-icon-wrap {
   width: 44px;
   height: 44px;
-  border-radius: 8px;
-  background: #ffffff;
-  border: 1px solid rgba(224, 165, 38, 0.5);
+  border-radius: 10px;
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--accent, #6E0516);
-  margin-bottom: 0.85rem;
+  color: var(--accent-text);
+  margin-bottom: 1rem;
+}
+
+html[data-theme="dark"] .channel-icon-wrap,
+html.dark .channel-icon-wrap {
+  color: var(--accent);
 }
 
 .channel-svg {
@@ -522,16 +308,17 @@ const sevaOfferings = [
 }
 
 .channel-name {
+  font-family: var(--font-serif);
   font-size: 1.15rem;
   font-weight: 700;
-  color: var(--text-primary, #2B1A17);
-  margin: 0 0 1rem;
+  color: var(--text-primary);
+  margin: 0 0 1.1rem;
 }
 
 .channel-details-list {
   display: flex;
   flex-direction: column;
-  gap: 0.65rem;
+  gap: 0.75rem;
 }
 
 .detail-line {
@@ -542,90 +329,109 @@ const sevaOfferings = [
 }
 
 .detail-line .lbl {
-  color: var(--text-secondary, #6B7280);
-  font-size: 0.775rem;
+  color: var(--text-muted);
+  font-size: 0.75rem;
   font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.04em;
+  letter-spacing: 0.05em;
 }
 
 .detail-line .val {
-  color: var(--text-primary, #2B1A17);
+  color: var(--text-primary);
+  word-break: break-word;
 }
 
 .font-semibold { font-weight: 600; }
 .font-bold { font-weight: 700; }
 .font-mono { font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; }
 
-/* Notice Box */
+/* ====================================================
+   3. DEVOTEE TRUST & DESK NOTICE BOX
+   ==================================================== */
 .trust-notice-box {
-  background: rgba(110, 5, 22, 0.04);
-  border: 1px solid rgba(110, 5, 22, 0.15);
-  border-radius: 8px;
-  padding: 1.25rem 1.5rem;
+  background-color: rgba(110, 5, 22, 0.04);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem 1.75rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.25rem;
+  gap: 1.5rem;
   flex-wrap: wrap;
 }
 
+html[data-theme="dark"] .trust-notice-box,
+html.dark .trust-notice-box {
+  background-color: rgba(212, 175, 55, 0.06);
+  border-color: var(--border-subtle);
+}
+
 .notice-text {
-  font-size: 0.875rem;
-  line-height: 1.55;
-  color: var(--text-primary, #2B1A17);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: var(--text-primary);
   flex: 1;
   min-width: 280px;
+  margin: 0;
 }
 
 .notice-actions {
   display: flex;
   align-items: center;
-  gap: 0.65rem;
+  gap: 0.75rem;
   flex-wrap: wrap;
 }
 
-.btn-notice-contact {
-  padding: 0.55rem 1.15rem;
-  border-radius: 6px;
-  background: var(--accent, #6E0516);
-  color: #ffffff;
-  font-size: 0.85rem;
+.btn-primary-action {
+  padding: 0.7rem 1.35rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  color: var(--btn-primary-text);
+  background-color: var(--btn-primary-bg);
+  border: 1px solid var(--btn-primary-bg);
+  border-radius: 8px;
   text-decoration: none;
-  min-height: 38px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  min-height: 40px;
 }
 
-.btn-notice-contact:hover {
-  background: var(--accent-hover, #4A020E);
+.btn-primary-action:hover {
+  background-color: var(--btn-primary-hover);
+  border-color: var(--btn-primary-hover);
 }
 
-.btn-notice-puja {
-  padding: 0.55rem 1.15rem;
-  border-radius: 6px;
-  background: #ffffff;
-  border: 1px solid var(--accent, #6E0516);
-  color: var(--accent, #6E0516);
-  font-size: 0.85rem;
+.btn-secondary-action {
+  padding: 0.7rem 1.35rem;
+  font-size: 0.875rem;
   font-weight: 600;
+  color: var(--text-primary);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
   text-decoration: none;
-  min-height: 38px;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  min-height: 40px;
 }
 
-.btn-notice-puja:hover {
-  background: rgba(110, 5, 22, 0.04);
+.btn-secondary-action:hover {
+  background-color: var(--bg-hover, rgba(110, 5, 22, 0.04));
+  border-color: var(--accent);
 }
 
-/* Responsiveness */
+/* ====================================================
+   4. RESPONSIVENESS
+   ==================================================== */
 @media (max-width: 768px) {
-  .donation-hero { padding: 3rem 1rem 2.5rem; }
-  .channels-card { padding: 1.25rem; }
+  .page-hero { padding: 2rem 1rem 1.5rem; }
+  .channels-card { padding: 1.5rem 1.25rem; }
   .trust-notice-box { flex-direction: column; align-items: stretch; }
   .notice-actions { flex-direction: column; width: 100%; }
-  .btn-notice-contact, .btn-notice-puja { justify-content: center; width: 100%; }
+  .btn-primary-action, .btn-secondary-action { width: 100%; text-align: center; }
 }
 </style>

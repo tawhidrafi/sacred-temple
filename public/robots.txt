@@ -1,2 +1,11 @@
-User-Agent: *
-Disallow:
+# ==============================================================================
+# Golpahar Mohashoshan Kali Mandir - Robots Configuration
+# ==============================================================================
+
+User-agent: *
+Allow: /
+Disallow: /admin/
+Disallow: /account/
+Disallow: /api/
+
+Sitemap: https://golpaharkalimandir.org/sitemap.xml

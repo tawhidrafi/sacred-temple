@@ -6,6 +6,14 @@ export default defineNuxtConfig({
   routeRules: {
     "/admin/**": { ssr: false },
     "/account/**": { ssr: false },
+    // Edge SWR caching for public content APIs (60s stale-while-revalidate)
+    "/api/public/bookings/**": { cache: false },
+    "/api/public/**": { swr: 60 },
+    "/api/cms/**": { swr: 60 },
+    // Ensure form submissions, booking queries, and admin APIs are never cached
+    "/api/forms/**": { cache: false },
+    "/api/admin/**": { cache: false },
+    "/api/trpc/**": { cache: false },
   },
   modules: ["nitro-cloudflare-dev"],
   build: { transpile: ["trpc-nuxt"] },

@@ -203,72 +203,69 @@ useHead({
    SITEMAP PAGE LAYOUT & HERO
    ==================================================== */
 .sitemap-page {
+  width: 100%;
   min-height: 80vh;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  padding-top: calc(var(--nav-height, 72px) + 2rem);
   padding-bottom: 5rem;
 }
 
 .sitemap-hero {
-  background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
-  padding: 4.5rem 1.5rem 2.5rem;
+  padding: 2.5rem 1.5rem 2rem;
   text-align: center;
-  border-bottom: 1px solid var(--border-subtle);
 }
 
 .hero-inner {
-  max-width: 760px;
+  max-width: 780px;
   margin: 0 auto;
 }
 
 .hero-badge {
   display: inline-block;
-  padding: 0.3rem 0.9rem;
+  padding: 0.35rem 0.9rem;
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.12em;
-  color: var(--color-brand);
-  background: rgba(110, 5, 22, 0.08);
-  border: 1px solid rgba(110, 5, 22, 0.2);
+  color: var(--accent-text);
+  background-color: rgba(110, 5, 22, 0.05);
+  border: 1px solid var(--border-color);
   border-radius: 9999px;
-  margin-bottom: 1rem;
+  margin-bottom: 1.25rem;
 }
 
-:global(.dark) .hero-badge {
+html[data-theme="dark"] .hero-badge,
+html.dark .hero-badge {
+  background-color: rgba(212, 175, 55, 0.08);
+  border-color: rgba(212, 175, 55, 0.25);
   color: var(--accent);
-  background: rgba(224, 165, 38, 0.12);
-  border-color: rgba(224, 165, 38, 0.3);
 }
 
 .hero-title {
   font-family: var(--font-serif);
-  font-size: clamp(2rem, 4vw, 2.75rem);
+  font-size: clamp(2.2rem, 4.2vw, 3.4rem);
   font-weight: 700;
-  color: var(--color-brand);
-  margin: 0 0 0.85rem;
-  letter-spacing: -0.01em;
-}
-
-:global(.dark) .hero-title {
-  color: #FFFFFF;
+  color: var(--heading-color);
+  margin: 0 0 1rem;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
 }
 
 .hero-subtitle {
-  font-family: var(--font-sans);
-  font-size: 1.05rem;
-  line-height: 1.6;
+  font-size: clamp(1rem, 1.8vw, 1.125rem);
+  line-height: 1.65;
   color: var(--text-secondary);
-  margin: 0 auto 1.5rem;
-  max-width: 600px;
+  margin: 0 auto;
+  max-width: 650px;
 }
 
 .hero-divider {
   width: 56px;
-  height: 3px;
+  height: 2px;
   background-color: var(--accent);
-  margin: 0 auto;
-  border-radius: 2px;
+  margin: 2rem auto 0;
+  opacity: 0.75;
 }
 
 /* ====================================================
